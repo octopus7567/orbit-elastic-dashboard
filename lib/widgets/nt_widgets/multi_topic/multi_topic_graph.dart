@@ -27,12 +27,12 @@ class TopicProperties {
 
   TopicProperties.fromJson(Map<String, dynamic> jsonData)
     : topic = jsonData['topic'] ?? '',
-      color = Color(tryCast(jsonData['color']) ?? Colors.cyan.value),
+      color = Color(tryCast(jsonData['color']) ?? Colors.cyan.toARGB32()),
       lineWidth = tryCast(jsonData['line_width']) ?? 2.0;
 
   Map<String, dynamic> toJson() => {
     'topic': topic,
-    'color': color.value,
+    'color': color.toARGB32(),
     'line_width': lineWidth,
   };
 }
