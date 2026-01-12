@@ -189,13 +189,13 @@ class GamePieceTopics {
   final NTConnection ntConnection;
   final double period;
 
-  late final SubscribedTopic<List<Object?>> gamePieces;
+  late final SubscribedTopic<List<double>> gamePieces;
 
   GamePieceTopics({required this.ntConnection, this.period = 0.1}) {
     gamePieces = SubscribedTopic(
       ntConnection: ntConnection,
       topic: '/Match/GamePiecePos',
-      defaultValue: [],
+      defaultValue: const <double>[],
     );
   }
 
@@ -205,20 +205,17 @@ class GamePieceTopics {
   List<Listenable> get listenables => [gamePieces.subscription];
 
   List<Offset> get value {
-    List<String> raw = gamePieces.value.whereType<String>().toList();
-    if (raw.isEmpty) {
-      return [];
-    }
+    List<double> raw = gamePieces.value;
 
-    try {
-      return raw
-          .map((e) => e.split(' '))
-          // In the format: x: 0.0, y: 0.0
-          .map((e) => Offset(double.parse(e[1]), double.parse(e[3])))
-          .toList();
-    } catch (_) {
-      return [];
+    List<Offset> offsets = [];
+    // The list is [x1, y1, x2, y2, ...], so we iterate by 2.
+    for (int i = 0; i < raw.length; i += 2) {
+      // Make sure there is a pair of coordinates
+      if (i + 1 < raw.length) {
+        offsets.add(Offset(raw[i], raw[i + 1]));
+      }
     }
+    return offsets;
   }
 }
 
