@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:elastic_dashboard/services/nt4_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -595,6 +596,30 @@ class _DashboardPageState extends State<DashboardPage>
       ),
       callback: model.exportLayout,
     );
+    // Reset Gyro (Ctrl + G)
+    hotKeyManager.register(
+      HotKey(
+        LogicalKeyboardKey.keyG,
+        modifiers: [KeyModifier.control],
+      ),
+      callback: () => _addTrueSample('/Match/Commander/ResetGyro'),
+    );
+    // Reset Turret (Ctrl + T)
+    hotKeyManager.register(
+      HotKey(
+        LogicalKeyboardKey.keyT,
+        modifiers: [KeyModifier.control],
+      ),
+      callback: () => _addTrueSample('/Match/Commander/ResetTurret'),
+    );
+    // Reset Canopy (Ctrl + C)
+    hotKeyManager.register(
+      HotKey(
+        LogicalKeyboardKey.keyC,
+        modifiers: [KeyModifier.control],
+      ),
+      callback: () => _addTrueSample('/Match/Commander/ResetCanopy'),
+    );
     // Download from robot (Ctrl + D)
     hotKeyManager.register(
       HotKey(LogicalKeyboardKey.keyD, modifiers: [KeyModifier.control]),
@@ -760,6 +785,13 @@ class _DashboardPageState extends State<DashboardPage>
         widget.model.changeIPAddressMode(IPAddressMode.localhost);
       },
     );
+  }
+
+  void _addTrueSample(String topicName) {
+    NT4Topic? topic = model.ntConnection.getTopicFromName(topicName);
+    if (topic != null) {
+      model.ntConnection.updateDataFromTopic(topic, true);
+    }
   }
 
   @override
