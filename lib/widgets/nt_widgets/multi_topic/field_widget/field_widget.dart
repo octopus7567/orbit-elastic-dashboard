@@ -17,8 +17,8 @@ extension _SizeUtils on Size {
   Offset get toOffset => Offset(width, height);
 
   Size rotateBy(double angle) => Size(
-    (width * cos(angle) - height * sin(angle)).abs(),
-    (height * cos(angle) + width * sin(angle)).abs(),
+    (width * cos(angle)).abs() + (height * sin(angle)).abs(),
+    (width * sin(angle)).abs() + (height * cos(angle)).abs(),
   );
 }
 
@@ -117,7 +117,6 @@ class FieldWidget extends NTWidget {
 
           Size imageDisplaySize = imageSize * scale;
 
-          Offset paintCenter = size.toOffset / 2;
           Offset fieldCenter = model.field.center;
 
           if (!model.rendered &&
@@ -210,150 +209,201 @@ class FieldWidget extends NTWidget {
             }
           }
 
+          final finalSize = rotatedImageBoundingBox * scale;
+
           return GestureDetector(
             onTapDown: (details) {
               if (model.ntConnection.isNT4Connected) {
-                Offset tapPosition = details.localPosition;
+                // The tap details are in the coordinate space of the GestureDetector,
+                // which is the size of the whole widget. We need to translate
+                // this to the coordinate space of the field itself.
+                final tapInWidget = details.localPosition;
 
-                // 1. Translate tapPosition to be relative to the widget's center.
-                double xRel = tapPosition.dx - paintCenter.dx;
-                double yRel = tapPosition.dy - paintCenter.dy;
+                // The field is centered in the widget, so translate the tap
+                // to be relative to the center of the widget.
+                final centerOfWidget = size.toOffset / 2.0;
+                final tapFromCenter = tapInWidget - centerOfWidget;
 
-                // 2. Apply inverse rotation to get coordinates relative to the unrotated field's center.
-                double angle = -radians(model.fieldRotation);
-                double xUnrotatedRel = xRel * cos(angle) - yRel * sin(angle);
-                double yUnrotatedRel = xRel * sin(angle) + yRel * cos(angle);
+                // The field is in a SizedBox of finalSize, so the tap
+                // might be outside the field.
+                if (!Rect.fromCenter(
+                  center: Offset.zero,
+                  width: finalSize.width,
+                  height: finalSize.height,
+                ).contains(tapFromCenter)) {
+                  return;
+                }
 
-                // 3. Apply inverse mirroring (if alliance is red, the y-axis is flipped).
-                double yUnrotatedRelMirrored = model.allianceTopic.value
-                    ? -yUnrotatedRel
-                    : yUnrotatedRel;
+                // Now, go from the coordinate space of the centered field back
+                // to the un-rotated, un-scaled field space.
+                final angle = -radians(model.fieldRotation);
+                final xUnrotated =
+                    tapFromCenter.dx * cos(angle) -
+                    tapFromCenter.dy * sin(angle);
+                final yUnrotated =
+                    tapFromCenter.dx * sin(angle) +
+                    tapFromCenter.dy * cos(angle);
 
-                // 4. Scale from screen coordinates to field meters and offset by field center.
-                double realX =
-                    (xUnrotatedRel / scale) /
-                        model.field.pixelsPerMeterHorizontal +
-                    model.field.center.dx /
-                        model.field.pixelsPerMeterHorizontal;
-                double realY =
-                    (-yUnrotatedRelMirrored / scale) /
-                        model.field.pixelsPerMeterVertical +
-                    model.field.center.dy / model.field.pixelsPerMeterVertical;
+                // Un-mirror if necessary
+                final yUnmirrored = model.allianceTopic.value
+                    ? -yUnrotated
+                    : yUnrotated;
 
-                model.commanderTopics.set(Offset(realX, realY));
+                // Un-scale from display pixels to image pixels
+                final xImage = xUnrotated / scale;
+                final yImage = yUnmirrored / scale;
+
+                // Go from image pixels relative to center to image pixels relative to TL
+                final xImageFromTL = xImage + model.field.center.dx;
+                final yImageFromTL = -yImage + model.field.center.dy;
+
+                // Go from image pixels to meters
+                final xMeters =
+                    xImageFromTL / model.field.pixelsPerMeterHorizontal;
+                final yMeters =
+                    yImageFromTL / model.field.pixelsPerMeterVertical;
+
+                model.commanderTopics.set(Offset(xMeters, yMeters));
               }
             },
             child: Center(
-              child: Transform.rotate(
-                angle: radians(model.fieldRotation),
-                child: Transform(
-                  transform: Matrix4.diagonal3Values(
-                    1,
-                    model.allianceTopic.value ? -1 : 1,
-                    1,
-                  ),
-                  alignment: Alignment.center,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      SizedBox(
-                        width: imageDisplaySize.width,
-                        height: imageDisplaySize.height,
-                        child: child!,
-                      ),
-                      if (model.showTrajectories)
-                        for (List<Offset> points in trajectoryPoints)
-                          CustomPaint(
-                            size: imageDisplaySize,
-                            painter: TrajectoryPainter(
-                              center: imageDisplaySize.toOffset / 2,
-                              color: model.trajectoryColor,
-                              points: points,
-                              strokeWidth:
-                                  model.trajectoryPointSize *
-                                  model.field.pixelsPerMeterHorizontal *
-                                  scale,
-                            ),
+              child: SizedBox(
+                width: finalSize.width,
+                height: finalSize.height,
+                child: ClipRect(
+                  child: UnconstrainedBox(
+                    child: Center(
+                      child: RotatedBox(
+                        quarterTurns: (model.fieldRotation / 90.0).round(),
+                        child: Transform(
+                          transform: Matrix4.diagonal3Values(
+                            1,
+                            model.allianceTopic.value ? -1 : 1,
+                            1,
                           ),
-                      if (model.showGamePieces)
-                        CustomPaint(
-                          size: imageDisplaySize,
-                          painter: GamePiecePainter(
-                            center: imageDisplaySize.toOffset / 2,
-                            field: model.field,
-                            gamePieces: model.gamePieceTopics.value,
-                            gamePieceColor: model.gamePieceColor,
-                            bestGamePieceColor: model.bestGamePieceColor,
-                            markerSize: model.gamePieceMarkerSize,
-                            scale: scale,
-                          ),
-                        ),
-                      if (model.showVisionTargets)
-                        CustomPaint(
-                          size: imageDisplaySize,
-                          painter: VisionPainter(
-                            center: imageDisplaySize.toOffset / 2,
-                            field: model.field,
-                            poses: [
-                              model.visionTopics.closeCamPose,
-                              model.visionTopics.farCamPose,
-                              model.visionTopics.leftCamPose,
-                              model.visionTopics.rightCamPose,
+                          alignment: Alignment.center,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              SizedBox(
+                                width: imageDisplaySize.width,
+                                height: imageDisplaySize.height,
+                                child: child!,
+                              ),
+                              if (model.showTrajectories)
+                                for (List<Offset> points in trajectoryPoints)
+                                  CustomPaint(
+                                    size: imageDisplaySize,
+                                    painter: TrajectoryPainter(
+                                      center: imageDisplaySize.toOffset / 2,
+                                      color: model.trajectoryColor,
+                                      points: points,
+                                      strokeWidth:
+                                          model.trajectoryPointSize *
+                                          model.field.pixelsPerMeterHorizontal *
+                                          scale,
+                                    ),
+                                  ),
+                              if (model.showGamePieces)
+                                CustomPaint(
+                                  size: imageDisplaySize,
+                                  painter: GamePiecePainter(
+                                    center: imageDisplaySize.toOffset / 2,
+                                    field: model.field,
+                                    gamePieces: model.gamePieceTopics.value,
+                                    gamePieceColor: model.gamePieceColor,
+                                    bestGamePieceColor:
+                                        model.bestGamePieceColor,
+                                    markerSize: model.gamePieceMarkerSize,
+                                    scale: scale,
+                                  ),
+                                ),
+                              if (model.showVisionTargets)
+                                CustomPaint(
+                                  size: imageDisplaySize,
+                                  painter: VisionPainter(
+                                    center: imageDisplaySize.toOffset / 2,
+                                    field: model.field,
+                                    poses: [
+                                      model.visionTopics.closeCamPose,
+                                      model.visionTopics.farCamPose,
+                                      model.visionTopics.leftCamPose,
+                                      model.visionTopics.rightCamPose,
+                                    ],
+                                    statuses: [
+                                      [
+                                        model
+                                            .visionTopics
+                                            .closeCamLocation
+                                            .value,
+                                        model
+                                            .visionTopics
+                                            .closeCamHeading
+                                            .value,
+                                      ],
+                                      [
+                                        model.visionTopics.farCamLocation.value,
+                                        model.visionTopics.farCamHeading.value,
+                                      ],
+                                      [
+                                        model
+                                            .visionTopics
+                                            .leftCamLocation
+                                            .value,
+                                        model.visionTopics.leftCamHeading.value,
+                                      ],
+                                      [
+                                        model
+                                            .visionTopics
+                                            .rightCamLocation
+                                            .value,
+                                        model
+                                            .visionTopics
+                                            .rightCamHeading
+                                            .value,
+                                      ],
+                                    ],
+                                    color: model.visionTargetColor,
+                                    markerSize: model.visionMarkerSize,
+                                    scale: scale,
+                                  ),
+                                ),
+                              if (model.showOtherObjects)
+                                CustomPaint(
+                                  size: imageDisplaySize,
+                                  painter: OtherObjectsPainter(
+                                    center: imageDisplaySize.toOffset / 2,
+                                    field: model.field,
+                                    subscriptions:
+                                        model.otherObjectSubscriptions,
+                                    isPoseStruct: model.isPoseStruct,
+                                    isPoseArrayStruct: model.isPoseArrayStruct,
+                                    robotColor: model.robotColor,
+                                    objectSize: model.otherObjectSize,
+                                    scale: scale,
+                                  ),
+                                ),
+                              CustomPaint(
+                                size: imageDisplaySize,
+                                painter: RobotPainter(
+                                  center: imageDisplaySize.toOffset / 2,
+                                  field: model.field,
+                                  robotPose: Offset(robotX, robotY),
+                                  robotAngle: robotTheta,
+                                  robotSize: Size(
+                                    model.robotWidthMeters,
+                                    model.robotLengthMeters,
+                                  ),
+                                  robotColor: model.robotColor,
+                                  robotImage: model.robotImage,
+                                  scale: scale,
+                                ),
+                              ),
                             ],
-                            statuses: [
-                              [
-                                model.visionTopics.closeCamLocation.value,
-                                model.visionTopics.closeCamHeading.value,
-                              ],
-                              [
-                                model.visionTopics.farCamLocation.value,
-                                model.visionTopics.farCamHeading.value,
-                              ],
-                              [
-                                model.visionTopics.leftCamLocation.value,
-                                model.visionTopics.leftCamHeading.value,
-                              ],
-                              [
-                                model.visionTopics.rightCamLocation.value,
-                                model.visionTopics.rightCamHeading.value,
-                              ],
-                            ],
-                            color: model.visionTargetColor,
-                            markerSize: model.visionMarkerSize,
-                            scale: scale,
                           ),
-                        ),
-                      if (model.showOtherObjects)
-                        CustomPaint(
-                          size: imageDisplaySize,
-                          painter: OtherObjectsPainter(
-                            center: imageDisplaySize.toOffset / 2,
-                            field: model.field,
-                            subscriptions: model.otherObjectSubscriptions,
-                            isPoseStruct: model.isPoseStruct,
-                            isPoseArrayStruct: model.isPoseArrayStruct,
-                            robotColor: model.robotColor,
-                            objectSize: model.otherObjectSize,
-                            scale: scale,
-                          ),
-                        ),
-                      CustomPaint(
-                        size: imageDisplaySize,
-                        painter: RobotPainter(
-                          center: imageDisplaySize.toOffset / 2,
-                          field: model.field,
-                          robotPose: Offset(robotX, robotY),
-                          robotAngle: robotTheta,
-                          robotSize: Size(
-                            model.robotWidthMeters,
-                            model.robotLengthMeters,
-                          ),
-                          robotColor: model.robotColor,
-                          robotImage: model.robotImage,
-                          scale: scale,
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
