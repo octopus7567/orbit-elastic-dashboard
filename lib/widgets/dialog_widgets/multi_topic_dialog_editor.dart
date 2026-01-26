@@ -12,11 +12,10 @@ class MultiTopicDialogEditor extends StatefulWidget {
   final List<TopicProperties> topicProperties;
   final Function(List<TopicProperties>) onTopicPropertyChanged;
   final Widget Function(
-    BuildContext context,
-    TopicProperties currentProperties,
-    VoidCallback onDataChanged,
-  )
-  customPropertyBuilder;
+      BuildContext context,
+      TopicProperties currentProperties,
+      VoidCallback onDataChanged,
+      ) customPropertyBuilder;
 
   const MultiTopicDialogEditor({
     super.key,
@@ -35,87 +34,90 @@ class _MultiTopicDialogEditorState extends State<MultiTopicDialogEditor> {
   void _showTopicDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => NetworkTablesTopicDialog(
-        ntConnection: widget.ntConnection,
-        onTopicSelected: (topic) {
-          if (topic == null) {
-            return;
-          }
+      builder: (context) {
+        return NetworkTablesTopicDialog(
+          ntConnection: widget.ntConnection,
+          onTopicSelected: (topic) {
+            if (topic == null) {
+              return;
+            }
 
-          setState(() {
-            widget.topicProperties.add(
-              TopicProperties(
-                topic: topic,
-                color:
-                    Colors.primaries[widget.topicProperties.length %
-                        Colors.primaries.length],
-              ),
-            );
+            setState(() {
+              widget.topicProperties.add(
+                TopicProperties(
+                  topic: topic,
+                  color: Colors.primaries[
+                  widget.topicProperties.length % Colors.primaries.length],
+                ),
+              );
 
-            widget.onTopicPropertyChanged.call(widget.topicProperties);
-          });
-        },
-      ),
+              widget.onTopicPropertyChanged.call(widget.topicProperties);
+            });
+          },
+        );
+      },
     );
   }
 
   @override
-  Widget build(BuildContext context) => Column(
-    children: [
-      ...widget.topicProperties.map(
-        (properties) => Column(
-          children: [
-            const Divider(),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ...widget.topicProperties.map(
+              (properties) {
+            return Column(
               children: [
-                Flexible(
-                  child: DialogTextInput(
-                    onSubmit: (value) {
-                      setState(() {
-                        properties.topic = value;
-                        widget.onTopicPropertyChanged.call(
-                          widget.topicProperties,
-                        );
-                      });
-                    },
-                    label: 'Topic',
-                    initialText: properties.topic,
-                  ),
+                const Divider(),
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: DialogTextInput(
+                        onSubmit: (value) {
+                          setState(() {
+                            properties.topic = value;
+                            widget.onTopicPropertyChanged
+                                .call(widget.topicProperties);
+                          });
+                        },
+                        label: 'Topic',
+                        initialText: properties.topic,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          widget.topicProperties.remove(properties);
+                          widget.onTopicPropertyChanged
+                              .call(widget.topicProperties);
+                        });
+                      },
+                      icon: const Icon(Icons.delete),
+                      tooltip: 'Remove Topic',
+                    ),
+                  ],
                 ),
-                IconButton(
-                  onPressed: () {
+                widget.customPropertyBuilder.call(
+                  context,
+                  properties,
+                      () {
                     setState(() {
-                      widget.topicProperties.remove(properties);
-                      widget.onTopicPropertyChanged.call(
-                        widget.topicProperties,
-                      );
+                      widget.onTopicPropertyChanged.call(widget.topicProperties);
                     });
                   },
-                  icon: const Icon(Icons.delete),
-                  tooltip: 'Remove Topic',
                 ),
               ],
-            ),
-            widget.customPropertyBuilder.call(
-              context,
-              properties,
-              () {
-                setState(() {
-                  widget.onTopicPropertyChanged.call(widget.topicProperties);
-                });
-              },
-            ),
-          ],
+            );
+          },
         ),
-      ),
-      const SizedBox(height: 5),
-      ElevatedButton.icon(
-        onPressed: () => _showTopicDialog(context),
-        icon: const Icon(Icons.add),
-        label: const Text('Add Topic'),
-      ),
-    ],
-  );
+        const SizedBox(height: 5),
+        ElevatedButton.icon(
+          onPressed: () => _showTopicDialog(context),
+          icon: const Icon(Icons.add),
+          label: const Text('Add Topic'),
+        ),
+      ],
+    );
+  }
 }

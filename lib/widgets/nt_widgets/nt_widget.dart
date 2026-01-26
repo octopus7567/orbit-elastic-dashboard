@@ -104,7 +104,9 @@ class SingleTopicNTWidgetModel extends NTWidgetModel {
     this.ntStructMeta,
     this.dataType,
     super.period,
-  }) : super();
+  }) : super() {
+    init();
+  }
 
   SingleTopicNTWidgetModel.createDefault({
     required super.ntConnection,
@@ -115,7 +117,9 @@ class SingleTopicNTWidgetModel extends NTWidgetModel {
     this.dataType,
     super.period,
   }) : _typeOverride = type,
-       super();
+       super() {
+    init();
+  }
 
   SingleTopicNTWidgetModel.createDefaultFromJson({
     required super.ntConnection,
@@ -145,6 +149,8 @@ class SingleTopicNTWidgetModel extends NTWidgetModel {
     if (structMetaJson != null) {
       ntStructMeta = NT4StructMeta.fromJson(structMetaJson);
     }
+
+    init();
   }
 
   @override
@@ -220,7 +226,7 @@ class SingleTopicNTWidgetModel extends NTWidgetModel {
 
   @override
   @mustCallSuper
-  void init() {
+  void init() async {
     subscription = ntConnection.subscribeWithOptions(
       topic,
       NT4SubscriptionOptions(
@@ -308,13 +314,17 @@ class MultiTopicNTWidgetModel extends NTWidgetModel {
     required super.preferences,
     required super.topic,
     super.period,
-  }) : super();
+  }) : super() {
+    init();
+  }
 
   MultiTopicNTWidgetModel.fromJson({
     required super.ntConnection,
     required super.preferences,
     required super.jsonData,
-  }) : super.fromJson();
+  }) : super.fromJson() {
+    init();
+  }
 
   @override
   @mustCallSuper

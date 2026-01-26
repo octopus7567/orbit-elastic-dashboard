@@ -160,6 +160,7 @@ abstract class WidgetContainerModel extends ChangeNotifier {
   }) : _title = title,
        _enabled = enabled {
     _displayRect = initialPosition;
+    init();
   }
 
   WidgetContainerModel.fromJson({
@@ -171,6 +172,7 @@ abstract class WidgetContainerModel extends ChangeNotifier {
     Function(String errorMessage)? onJsonLoadingWarning,
   }) : _enabled = enabled {
     fromJson(jsonData);
+    init();
   }
 
   void init() {

@@ -64,9 +64,6 @@ class ListLayoutModel extends LayoutContainerModel {
   }) : super() {
     if (children != null) {
       this.children = children;
-      for (final child in this.children) {
-        child.init();
-      }
     }
   }
 
@@ -142,7 +139,6 @@ class ListLayoutModel extends LayoutContainerModel {
       );
 
       if (widgetModel != null) {
-        widgetModel.init();
         children.add(widgetModel);
       }
     }

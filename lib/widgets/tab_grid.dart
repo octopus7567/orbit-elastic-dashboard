@@ -108,16 +108,14 @@ class TabGridModel extends ChangeNotifier {
         }
 
         if (valid) {
-          final model = NTWidgetContainerModel.fromJson(
-            ntConnection: ntConnection,
-            jsonData: widgetData,
-            preferences: preferences,
-            enabled: ntConnection.isNT4Connected,
-            onJsonLoadingWarning: onJsonLoadingWarning,
-          );
-          model.init();
           addWidget(
-            model,
+            NTWidgetContainerModel.fromJson(
+              ntConnection: ntConnection,
+              jsonData: widgetData,
+              preferences: preferences,
+              enabled: ntConnection.isNT4Connected,
+              onJsonLoadingWarning: onJsonLoadingWarning,
+            ),
           );
         }
       }
@@ -152,33 +150,28 @@ class TabGridModel extends ChangeNotifier {
         }
 
         if (valid && widgetData['type'] == 'List Layout') {
-          final model = ListLayoutModel.fromJson(
-            jsonData: widgetData,
-            preferences: preferences,
-            ntWidgetBuilder:
-                (preferences, jsonData, enabled, {onJsonLoadingWarning}) {
-              final widgetModel = NTWidgetContainerModel.fromJson(
-                ntConnection: ntConnection,
-                jsonData: jsonData,
-                preferences: preferences,
-                enabled: ntConnection.isNT4Connected,
-                onJsonLoadingWarning: onJsonLoadingWarning,
-              );
-              widgetModel.init();
-              return widgetModel;
-            },
-            enabled: ntConnection.isNT4Connected,
-            dragOutFunctions: (
-              dragOutUpdate: layoutDragOutUpdate,
-              dragOutEnd: layoutDragOutEnd,
-            ),
-            onDragCancel: _layoutContainerOnDragCancel,
-            minWidth: 128.0 * 2,
-            minHeight: 128.0 * 2,
-          );
-          model.init();
           addWidget(
-            model,
+            ListLayoutModel.fromJson(
+              jsonData: widgetData,
+              preferences: preferences,
+              ntWidgetBuilder:
+                  (preferences, jsonData, enabled, {onJsonLoadingWarning}) =>
+                      NTWidgetContainerModel.fromJson(
+                        ntConnection: ntConnection,
+                        jsonData: jsonData,
+                        preferences: preferences,
+                        enabled: ntConnection.isNT4Connected,
+                        onJsonLoadingWarning: onJsonLoadingWarning,
+                      ),
+              enabled: ntConnection.isNT4Connected,
+              dragOutFunctions: (
+                dragOutUpdate: layoutDragOutUpdate,
+                dragOutEnd: layoutDragOutEnd,
+              ),
+              onDragCancel: _layoutContainerOnDragCancel,
+              minWidth: 128.0 * 2,
+              minHeight: 128.0 * 2,
+            ),
           );
         }
       }
@@ -190,16 +183,14 @@ class TabGridModel extends ChangeNotifier {
     Function(String message)? onJsonLoadingWarning,
   }) {
     for (Map<String, dynamic> containerData in jsonData['containers']) {
-      final model = NTWidgetContainerModel.fromJson(
-        ntConnection: ntConnection,
-        preferences: preferences,
-        enabled: ntConnection.isNT4Connected,
-        jsonData: containerData,
-        onJsonLoadingWarning: onJsonLoadingWarning,
-      );
-      model.init();
       addWidget(
-        model,
+        NTWidgetContainerModel.fromJson(
+          ntConnection: ntConnection,
+          preferences: preferences,
+          enabled: ntConnection.isNT4Connected,
+          jsonData: containerData,
+          onJsonLoadingWarning: onJsonLoadingWarning,
+        ),
       );
     }
   }
@@ -224,17 +215,14 @@ class TabGridModel extends ChangeNotifier {
             preferences: preferences,
             jsonData: layoutData,
             ntWidgetBuilder:
-                (preferences, jsonData, enabled, {onJsonLoadingWarning}) {
-              final model = NTWidgetContainerModel.fromJson(
-                ntConnection: ntConnection,
-                jsonData: jsonData,
-                preferences: preferences,
-                enabled: ntConnection.isNT4Connected,
-                onJsonLoadingWarning: onJsonLoadingWarning,
-              );
-              model.init();
-              return model;
-            },
+                (preferences, jsonData, enabled, {onJsonLoadingWarning}) =>
+                    NTWidgetContainerModel.fromJson(
+                      ntConnection: ntConnection,
+                      jsonData: jsonData,
+                      preferences: preferences,
+                      enabled: ntConnection.isNT4Connected,
+                      onJsonLoadingWarning: onJsonLoadingWarning,
+                    ),
             enabled: ntConnection.isNT4Connected,
             dragOutFunctions: (
               dragOutUpdate: layoutDragOutUpdate,
@@ -245,12 +233,10 @@ class TabGridModel extends ChangeNotifier {
             minHeight: 128.0 * 2,
             onJsonLoadingWarning: onJsonLoadingWarning,
           );
-          break;
         default:
           continue;
       }
 
-      widget.init();
       addWidget(widget);
     }
   }
@@ -717,30 +703,24 @@ class TabGridModel extends ChangeNotifier {
   ListLayoutModel createListLayout({
     String title = 'List Layout',
     List<NTWidgetContainerModel>? children,
-  }) {
-    final model = ListLayoutModel(
-      preferences: preferences,
-      title: title,
-      initialPosition: Rect.fromLTWH(
-        0.0,
-        0.0,
-        NTWidgetRegistry.getNormalSize(preferences.getInt(PrefKeys.gridSize)) *
-            2,
-        NTWidgetRegistry.getNormalSize(preferences.getInt(PrefKeys.gridSize)) *
-            2,
-      ),
-      children: children,
-      minWidth: 128.0,
-      minHeight: 128.0,
-      dragOutFunctions: (
-        dragOutUpdate: layoutDragOutUpdate,
-        dragOutEnd: layoutDragOutEnd,
-      ),
-      onDragCancel: _layoutContainerOnDragCancel,
-    );
-    model.init();
-    return model;
-  }
+  }) => ListLayoutModel(
+    preferences: preferences,
+    title: title,
+    initialPosition: Rect.fromLTWH(
+      0.0,
+      0.0,
+      NTWidgetRegistry.getNormalSize(preferences.getInt(PrefKeys.gridSize)) * 2,
+      NTWidgetRegistry.getNormalSize(preferences.getInt(PrefKeys.gridSize)) * 2,
+    ),
+    children: children,
+    minWidth: 128.0,
+    minHeight: 128.0,
+    dragOutFunctions: (
+      dragOutUpdate: layoutDragOutUpdate,
+      dragOutEnd: layoutDragOutEnd,
+    ),
+    onDragCancel: _layoutContainerOnDragCancel,
+  );
 
   void addWidget(WidgetContainerModel widget) {
     _widgetModels.add(widget);
@@ -1175,7 +1155,7 @@ class TabGrid extends StatelessWidget {
     Map<String, dynamic> json,
   ) {
     if (json['type'] == 'List Layout') {
-      final model = ListLayoutModel.fromJson(
+      return ListLayoutModel.fromJson(
         preferences: grid.preferences,
         jsonData: json,
         dragOutFunctions: (
@@ -1183,29 +1163,22 @@ class TabGrid extends StatelessWidget {
           dragOutEnd: grid.layoutDragOutEnd,
         ),
         ntWidgetBuilder:
-            (preferences, jsonData, enabled, {onJsonLoadingWarning}) {
-          final widgetModel = NTWidgetContainerModel.fromJson(
-            ntConnection: grid.ntConnection,
-            jsonData: jsonData,
-            preferences: preferences,
-            onJsonLoadingWarning: onJsonLoadingWarning,
-          );
-          widgetModel.init();
-          return widgetModel;
-        },
+            (preferences, jsonData, enabled, {onJsonLoadingWarning}) =>
+                NTWidgetContainerModel.fromJson(
+                  ntConnection: grid.ntConnection,
+                  jsonData: jsonData,
+                  preferences: preferences,
+                  onJsonLoadingWarning: onJsonLoadingWarning,
+                ),
         onDragCancel: grid._layoutContainerOnDragCancel,
       );
-      model.init();
-      return model;
     } else {
-      final model = NTWidgetContainerModel.fromJson(
+      return NTWidgetContainerModel.fromJson(
         ntConnection: grid.ntConnection,
         preferences: grid.preferences,
         enabled: grid.ntConnection.isNT4Connected,
         jsonData: json,
       );
-      model.init();
-      return model;
     }
   }
 }
