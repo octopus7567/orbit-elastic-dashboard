@@ -383,6 +383,16 @@ class FieldWidget extends NTWidget {
                                     scale: scale,
                                   ),
                                 ),
+                              if (model.showSpecialMarkers)
+                                CustomPaint(
+                                  size: imageDisplaySize,
+                                  painter: SpecialMarkerPainter(
+                                    center: imageDisplaySize.toOffset / 2,
+                                    field: model.field,
+                                    markers: model.specialMarkerTopics.markers,
+                                    scale: scale,
+                                  ),
+                                ),
                               CustomPaint(
                                 size: imageDisplaySize,
                                 painter: RobotPainter(

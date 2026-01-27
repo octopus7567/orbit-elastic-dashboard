@@ -10,6 +10,7 @@ import 'package:elastic_dashboard/widgets/dialog_widgets/dialog_dropdown_chooser
 import 'package:elastic_dashboard/widgets/dialog_widgets/dialog_text_input.dart';
 import 'package:elastic_dashboard/widgets/dialog_widgets/dialog_toggle_switch.dart';
 import 'package:elastic_dashboard/widgets/nt_widgets/multi_topic/field_widget/field_topics.dart';
+import 'package:elastic_dashboard/widgets/nt_widgets/multi_topic/field_widget/special_marker_topics.dart';
 import 'package:elastic_dashboard/widgets/nt_widgets/nt_widget.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,7 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
   late final GamePieceTopics gamePieceTopics;
   late final AllianceTopic allianceTopic;
   late final CommanderTopics commanderTopics;
+  late final SpecialMarkerTopics specialMarkerTopics;
 
   @override
   List<NT4Subscription> get subscriptions => [
@@ -42,6 +44,7 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
     ...visionTopics.listenables.whereType<NT4Subscription>(),
     ...gamePieceTopics.listenables.whereType<NT4Subscription>(),
     ...allianceTopic.listenables.whereType<NT4Subscription>(),
+    specialMarkerTopics.subscription,
   ];
 
   bool rendered = false;
@@ -61,6 +64,7 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
 
   bool _showVisionTargets = false;
   bool _showGamePieces = false;
+  bool _showSpecialMarkers = false;
 
   double _fieldRotation = 0.0;
 
@@ -126,6 +130,13 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
 
   set showGamePieces(bool value) {
     _showGamePieces = value;
+    refresh();
+  }
+
+  bool get showSpecialMarkers => _showSpecialMarkers;
+
+  set showSpecialMarkers(bool value) {
+    _showSpecialMarkers = value;
     refresh();
   }
 
@@ -198,6 +209,7 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
     bool showTrajectories = true,
     bool showVisionTargets = false,
     bool showGamePieces = false,
+    bool showSpecialMarkers = false,
     double robotWidthMeters = 0.85,
     double robotLengthMeters = 0.85,
     double fieldRotation = 0.0,
@@ -211,6 +223,7 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
        _showOtherObjects = showOtherObjects,
        _showVisionTargets = showVisionTargets,
        _showGamePieces = showGamePieces,
+       _showSpecialMarkers = showSpecialMarkers,
        _robotImagePath = robotImagePath,
        _robotWidthMeters = robotWidthMeters,
        _robotLengthMeters = robotLengthMeters,
@@ -244,6 +257,10 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
     );
     allianceTopic = AllianceTopic(ntConnection: ntConnection, period: period);
     commanderTopics = CommanderTopics(ntConnection: ntConnection);
+    specialMarkerTopics = SpecialMarkerTopics(
+      ntConnection: ntConnection,
+      period: period,
+    );
   }
 
   FieldWidgetModel.fromJson({
@@ -262,6 +279,10 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
          ntConnection: ntConnection,
          period: tryCast<double>(jsonData['period']) ?? 0.0,
        ),
+       specialMarkerTopics = SpecialMarkerTopics(
+         ntConnection: ntConnection,
+         period: tryCast<double>(jsonData['period']) ?? 0.0,
+       ),
        commanderTopics = CommanderTopics(ntConnection: ntConnection),
        super.fromJson(jsonData: jsonData) {
     _fieldGame = tryCast(jsonData['field_game']) ?? _fieldGame;
@@ -277,6 +298,7 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
     _showTrajectories = tryCast(jsonData['show_trajectories']) ?? true;
     _showVisionTargets = tryCast(jsonData['show_vision_targets']) ?? false;
     _showGamePieces = tryCast(jsonData['show_game_pieces']) ?? false;
+    _showSpecialMarkers = tryCast(jsonData['show_special_markers']) ?? false;
 
     _fieldRotation = tryCast(jsonData['field_rotation']) ?? 0.0;
 
@@ -379,6 +401,7 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
     visionTopics.initialize();
     gamePieceTopics.initialize();
     allianceTopic.initialize();
+    specialMarkerTopics.initialize();
   }
 
   @override
@@ -391,6 +414,7 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
     gamePieceTopics.dispose();
     allianceTopic.dispose();
     commanderTopics.unpublish();
+    specialMarkerTopics.dispose();
 
     ntConnection.removeTopicAnnounceListener(topicAnnounceListener);
     ntConnection.addTopicAnnounceListener(topicAnnounceListener);
@@ -407,6 +431,7 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
       gamePieceTopics.dispose();
       allianceTopic.dispose();
       commanderTopics.unpublish();
+      specialMarkerTopics.dispose();
     }
 
     widgetSize = null;
@@ -424,6 +449,7 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
     'show_trajectories': _showTrajectories,
     'show_vision_targets': _showVisionTargets,
     'show_game_pieces': _showGamePieces,
+    'show_special_markers': _showSpecialMarkers,
     'field_rotation': _fieldRotation,
     'robot_color': robotColor.toARGB32(),
     'trajectory_color': trajectoryColor.toARGB32(),
@@ -602,6 +628,16 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
       ],
     ),
     const SizedBox(height: 5),
+    Flexible(
+      child: DialogToggleSwitch(
+        label: 'Show Special Markers',
+        initialValue: _showSpecialMarkers,
+        onToggle: (value) {
+          showSpecialMarkers = value;
+        },
+      ),
+    ),
+    const SizedBox(height: 10),
     Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

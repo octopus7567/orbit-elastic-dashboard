@@ -5,6 +5,7 @@ import 'package:dot_cast/dot_cast.dart';
 import 'package:elastic_dashboard/services/field_images.dart';
 import 'package:elastic_dashboard/services/nt4_client.dart';
 import 'package:elastic_dashboard/services/struct_schemas/pose2d_struct.dart';
+import 'package:elastic_dashboard/widgets/nt_widgets/multi_topic/field_widget/special_marker_topics.dart';
 import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart' show radians;
 
@@ -427,4 +428,115 @@ class OtherObjectsPainter extends CustomPainter {
   bool shouldRepaint(covariant OtherObjectsPainter oldDelegate) =>
       oldDelegate.subscriptions != subscriptions ||
       oldDelegate.robotColor != robotColor;
+}
+
+class SpecialMarkerPainter extends CustomPainter {
+  final Offset center;
+  final Field field;
+  final List<Marker> markers;
+  final double scale;
+  final double markerSize;
+
+  SpecialMarkerPainter({
+    required this.center,
+    required this.field,
+    required this.markers,
+    required this.scale,
+    this.markerSize = 0.3, // Default size in meters
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    for (Marker marker in markers) {
+      double x = marker.x;
+      double y = marker.y;
+
+      if (!x.isFinite || x.isNaN) x = 0;
+      if (!y.isFinite || y.isNaN) y = 0;
+
+      double xFromCenter =
+          (x * field.pixelsPerMeterHorizontal - field.center.dx) * scale;
+      double yFromCenter =
+          (field.center.dy - (y * field.pixelsPerMeterVertical)) * scale;
+
+      final Offset markerCenter = Offset(
+        center.dx + xFromCenter,
+        center.dy + yFromCenter,
+      );
+
+      final Paint paint = Paint()
+        ..color = marker.color
+        ..style = PaintingStyle.fill;
+
+      // Convert marker size from meters to pixels, scaled
+      final double scaledMarkerSize =
+          markerSize * field.pixelsPerMeterHorizontal * scale;
+
+      switch (marker.shapeId) {
+        case 0: // Circle
+          canvas.drawCircle(markerCenter, scaledMarkerSize / 2, paint);
+          break;
+        case 1: // Square
+          final Rect rect = Rect.fromCenter(
+            center: markerCenter,
+            width: scaledMarkerSize,
+            height: scaledMarkerSize,
+          );
+          canvas.drawRect(rect, paint);
+          break;
+        case 2: // Triangle (pointing up)
+          final Path trianglePath = Path()
+            ..moveTo(markerCenter.dx, markerCenter.dy - scaledMarkerSize / 2)
+            ..lineTo(
+              markerCenter.dx + scaledMarkerSize / 2,
+              markerCenter.dy + scaledMarkerSize / 2,
+            )
+            ..lineTo(
+              markerCenter.dx - scaledMarkerSize / 2,
+              markerCenter.dy + scaledMarkerSize / 2,
+            )
+            ..close();
+          canvas.drawPath(trianglePath, paint);
+          break;
+        case 3: // Diamond
+          final Path diamondPath = Path()
+            ..moveTo(markerCenter.dx, markerCenter.dy - scaledMarkerSize / 2)
+            ..lineTo(markerCenter.dx + scaledMarkerSize / 2, markerCenter.dy)
+            ..lineTo(markerCenter.dx, markerCenter.dy + scaledMarkerSize / 2)
+            ..lineTo(markerCenter.dx - scaledMarkerSize / 2, markerCenter.dy)
+            ..close();
+          canvas.drawPath(diamondPath, paint);
+          break;
+        case 4: // Cross (thin rectangle in cross shape)
+          // Horizontal bar
+          canvas.drawRect(
+            Rect.fromCenter(
+              center: markerCenter,
+              width: scaledMarkerSize,
+              height: scaledMarkerSize / 3,
+            ),
+            paint,
+          );
+          // Vertical bar
+          canvas.drawRect(
+            Rect.fromCenter(
+              center: markerCenter,
+              width: scaledMarkerSize / 3,
+              height: scaledMarkerSize,
+            ),
+            paint,
+          );
+          break;
+        default: // Default to a circle if shapeId is unknown
+          canvas.drawCircle(markerCenter, scaledMarkerSize / 2, paint);
+          break;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant SpecialMarkerPainter oldDelegate) =>
+      oldDelegate.markers != markers ||
+      oldDelegate.scale != scale ||
+      oldDelegate.markerSize != markerSize;
 }
