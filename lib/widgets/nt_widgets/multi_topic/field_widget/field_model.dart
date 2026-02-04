@@ -200,9 +200,9 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
       'struct:Pose2d[]';
 
   FieldWidgetModel({
-    required super.ntConnection,
-    required super.preferences,
-    required super.topic,
+    required ntConnection,
+    required preferences,
+    required topic,
     String? fieldGame,
     String? robotImagePath,
     bool showOtherObjects = true,
@@ -218,7 +218,7 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
     Color visionTargetColor = Colors.green,
     Color gamePieceColor = Colors.yellow,
     Color bestGamePieceColor = Colors.orange,
-    super.period,
+    double? period,
   }) : _showTrajectories = showTrajectories,
        _showOtherObjects = showOtherObjects,
        _showVisionTargets = showVisionTargets,
@@ -233,7 +233,33 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
        _visionTargetColor = visionTargetColor,
        _gamePieceColor = gamePieceColor,
        _bestGamePieceColor = bestGamePieceColor,
-       super() {
+       visionTopics = VisionTopics(
+         ntConnection: ntConnection,
+         period: period ?? 0.1,
+       ),
+       gamePieceTopics = GamePieceTopics(
+         ntConnection: ntConnection,
+         period: period ?? 0.1,
+       ),
+       allianceTopic = AllianceTopic(
+         ntConnection: ntConnection,
+         period: period ?? 0.1,
+       ),
+       commanderTopics = CommanderTopics(ntConnection: ntConnection),
+       specialMarkerTopics = SpecialMarkerTopics(
+         ntConnection: ntConnection,
+         period: period ?? 0.1,
+       ),
+       super(
+         ntConnection: ntConnection,
+         preferences: preferences,
+         topic: topic,
+         period: period,
+       ) {
+    if (fieldGame != null) {
+      _fieldGame = fieldGame;
+    }
+
     if (!FieldImages.hasField(_fieldGame)) {
       _fieldGame = _defaultGame;
     }
@@ -249,18 +275,6 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
     } else {
       _field = field;
     }
-
-    visionTopics = VisionTopics(ntConnection: ntConnection, period: period);
-    gamePieceTopics = GamePieceTopics(
-      ntConnection: ntConnection,
-      period: period,
-    );
-    allianceTopic = AllianceTopic(ntConnection: ntConnection, period: period);
-    commanderTopics = CommanderTopics(ntConnection: ntConnection);
-    specialMarkerTopics = SpecialMarkerTopics(
-      ntConnection: ntConnection,
-      period: period,
-    );
   }
 
   FieldWidgetModel.fromJson({

@@ -291,8 +291,8 @@ class NT4Topic {
     required this.type,
     this.id = 0,
     this.pubUID = 0,
-    required this.properties,
-  });
+    required Map<String, dynamic> properties,
+  }) : properties = Map.from(properties);
 
   @override
   String toString() =>
