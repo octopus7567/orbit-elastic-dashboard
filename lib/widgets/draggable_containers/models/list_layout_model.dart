@@ -555,6 +555,7 @@ class ListLayoutModel extends LayoutContainerModel {
   WidgetContainer getDraggingWidgetContainer(BuildContext context) =>
       WidgetContainer(
         title: title,
+        showTitle: showTitle,
         width: draggingRect.width,
         height: draggingRect.height,
         cornerRadius:
@@ -579,6 +580,7 @@ class ListLayoutModel extends LayoutContainerModel {
   @override
   WidgetContainer getWidgetContainer(BuildContext context) => WidgetContainer(
     title: title,
+    showTitle: showTitle,
     width: displayRect.width,
     height: displayRect.height,
     cornerRadius:

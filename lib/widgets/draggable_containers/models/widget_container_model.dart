@@ -1,3 +1,4 @@
+import 'package:elastic_dashboard/widgets/dialog_widgets/dialog_toggle_switch.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dot_cast/dot_cast.dart';
@@ -16,8 +17,17 @@ abstract class WidgetContainerModel extends ChangeNotifier {
 
   String? get title => _title;
 
+  late bool _showTitle = false;
+
+  bool get showTitle => _showTitle;
+
   set title(String? value) {
     _title = value;
+    notifyListeners();
+  }
+
+  set showTitle(bool value) {
+    _showTitle = value;
     notifyListeners();
   }
 
@@ -154,10 +164,12 @@ abstract class WidgetContainerModel extends ChangeNotifier {
     required this.preferences,
     required Rect initialPosition,
     required String? title,
+    bool showTitle = false,
     bool enabled = false,
     this.minWidth = 128.0,
     this.minHeight = 128.0,
   }) : _title = title,
+       _showTitle = showTitle,
        _enabled = enabled {
     _displayRect = initialPosition;
     init();
@@ -166,11 +178,13 @@ abstract class WidgetContainerModel extends ChangeNotifier {
   WidgetContainerModel.fromJson({
     required Map<String, dynamic> jsonData,
     required this.preferences,
+    bool showTitle = false,
     bool enabled = false,
     this.minWidth = 128.0,
     this.minHeight = 128.0,
     Function(String errorMessage)? onJsonLoadingWarning,
-  }) : _enabled = enabled {
+  }) : _enabled = enabled,
+       _showTitle = showTitle {
     fromJson(jsonData);
     init();
   }
@@ -183,6 +197,7 @@ abstract class WidgetContainerModel extends ChangeNotifier {
   @mustCallSuper
   Map<String, dynamic> toJson() => {
     'title': title,
+    'showTitle': showTitle,
     'x': displayRect.left,
     'y': displayRect.top,
     'width': displayRect.width,
@@ -195,6 +210,8 @@ abstract class WidgetContainerModel extends ChangeNotifier {
     Function(String warningMessage)? onJsonLoadingWarning,
   }) {
     title = tryCast(jsonData['title']) ?? '';
+
+    showTitle = tryCast(jsonData['showTitle']) ?? false;
 
     double x = tryCast(jsonData['x']) ?? 0.0;
 
@@ -274,18 +291,33 @@ abstract class WidgetContainerModel extends ChangeNotifier {
     // Settings for the widget container
     const Text('Container Settings'),
     const SizedBox(height: 5),
-    DialogTextInput(
-      onSubmit: (value) {
-        title = value;
-      },
-      label: 'Title',
-      initialText: title,
+    Row(
+      children: [
+        Expanded(
+          flex: 72,
+          child: DialogTextInput(
+            onSubmit: (value) {
+              title = value;
+            },
+            label: 'Title',
+            initialText: title,
+          ),
+        ),
+        Expanded(
+          flex: 23,
+          child: DialogToggleSwitch(
+            onToggle: (value) => showTitle = value,
+            initialValue: showTitle,
+          ),
+        ),
+      ],
     ),
   ];
 
   WidgetContainer getDraggingWidgetContainer(BuildContext context) =>
       WidgetContainer(
         title: title,
+        showTitle: showTitle,
         width: draggingRect.width,
         height: draggingRect.height,
         cornerRadius:
@@ -297,6 +329,7 @@ abstract class WidgetContainerModel extends ChangeNotifier {
 
   WidgetContainer getWidgetContainer(BuildContext context) => WidgetContainer(
     title: title,
+    showTitle: showTitle,
     width: displayRect.width,
     height: displayRect.height,
     cornerRadius:

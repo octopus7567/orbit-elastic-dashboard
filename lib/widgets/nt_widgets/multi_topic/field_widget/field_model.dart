@@ -200,9 +200,9 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
       'struct:Pose2d[]';
 
   FieldWidgetModel({
-    required ntConnection,
-    required preferences,
-    required topic,
+    required super.ntConnection,
+    required super.preferences,
+    required super.topic,
     String? fieldGame,
     String? robotImagePath,
     bool showOtherObjects = true,
@@ -218,7 +218,7 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
     Color visionTargetColor = Colors.green,
     Color gamePieceColor = Colors.yellow,
     Color bestGamePieceColor = Colors.orange,
-    double? period,
+    super.period,
   }) : _showTrajectories = showTrajectories,
        _showOtherObjects = showOtherObjects,
        _showVisionTargets = showVisionTargets,
@@ -249,12 +249,6 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
        specialMarkerTopics = SpecialMarkerTopics(
          ntConnection: ntConnection,
          period: period ?? 0.1,
-       ),
-       super(
-         ntConnection: ntConnection,
-         preferences: preferences,
-         topic: topic,
-         period: period,
        ) {
     if (fieldGame != null) {
       _fieldGame = fieldGame;

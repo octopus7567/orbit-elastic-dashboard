@@ -313,6 +313,7 @@ class NTWidgetContainerModel extends WidgetContainerModel {
   WidgetContainer getDraggingWidgetContainer(BuildContext context) =>
       WidgetContainer(
         title: title,
+        showTitle: showTitle,
         width: draggingRect.width,
         height: draggingRect.height,
         cornerRadius:
@@ -325,6 +326,7 @@ class NTWidgetContainerModel extends WidgetContainerModel {
   @override
   WidgetContainer getWidgetContainer(BuildContext context) => WidgetContainer(
     title: title,
+    showTitle: showTitle,
     width: displayRect.width,
     height: displayRect.height,
     cornerRadius:

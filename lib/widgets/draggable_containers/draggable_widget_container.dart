@@ -154,7 +154,7 @@ class DraggableWidgetContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    WidgetContainerModel model = context.read<WidgetContainerModel>();
+    WidgetContainerModel model = context.watch<WidgetContainerModel>();
 
     return Stack(children: getStackChildren(model));
   }
@@ -170,10 +170,12 @@ class WidgetContainer extends StatelessWidget {
     this.opacity = 1.0,
     this.horizontalPadding = 7.5,
     this.verticalPadding = 7.5,
+    this.showTitle = false,
     this.cornerRadius = Defaults.cornerRadius,
   });
 
   final double opacity;
+  final bool showTitle;
   final String? title;
   final Widget? child;
   final double width;
@@ -210,30 +212,31 @@ class WidgetContainer extends StatelessWidget {
               child: Column(
                 children: [
                   // Title
-                  LayoutBuilder(
-                    builder: (context, constraints) => Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(cornerRadius),
-                          topRight: Radius.circular(cornerRadius),
+                  if (showTitle)
+                    LayoutBuilder(
+                      builder: (context, constraints) => Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(cornerRadius),
+                            topRight: Radius.circular(cornerRadius),
+                          ),
+                          color: theme.colorScheme.primaryContainer,
                         ),
-                        color: theme.colorScheme.primaryContainer,
-                      ),
-                      width: constraints.maxWidth,
-                      alignment: Alignment.center,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0,
-                          vertical: 6.50,
-                        ),
-                        child: Text(
-                          title!,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleSmall,
+                        width: constraints.maxWidth,
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10.0,
+                            vertical: 6.50,
+                          ),
+                          child: Text(
+                            title!,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleSmall,
+                          ),
                         ),
                       ),
                     ),
-                  ),
                   // The child widget
                   Expanded(
                     child: Padding(
