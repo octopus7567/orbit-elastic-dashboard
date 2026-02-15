@@ -354,6 +354,7 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
       if (nt4Topic.name.startsWith(topic) &&
           !nt4Topic.name.endsWith('Robot') &&
           !nt4Topic.name.contains('.') &&
+          !nt4Topic.name.contains('Marker') &&
           !otherObjectTopics.contains(nt4Topic.name)) {
         otherObjectTopics.add(nt4Topic.name);
         otherObjectSubscriptions.add(

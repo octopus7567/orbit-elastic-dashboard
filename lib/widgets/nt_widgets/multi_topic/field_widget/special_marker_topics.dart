@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:elastic_dashboard/services/nt4_client.dart';
 import 'package:elastic_dashboard/services/nt_connection.dart';
+import 'package:elastic_dashboard/widgets/nt_widgets/multi_topic/field_widget/field_topics.dart';
 
 class Marker {
   final double x;
@@ -35,24 +36,29 @@ class SpecialMarkerTopics {
   final NTConnection ntConnection;
   final double period;
 
-  late final NT4Subscription subscription;
+  late final SubscribedTopic<List<dynamic>> _markerData;
 
-  SpecialMarkerTopics({required this.ntConnection, this.period = 0.1});
+  NT4Subscription get subscription => _markerData.subscription;
 
-  void initialize() {
-    subscription = ntConnection.subscribe(
-      '/Match/SpecialMarkers/MarkerData',
-      period,
+  SpecialMarkerTopics({required this.ntConnection, this.period = 0.1}) {
+    _markerData = SubscribedTopic(
+      ntConnection: ntConnection,
+      topic: '/Match/Pose/MarkerData',
+      defaultValue: const [],
+      period: period,
     );
   }
 
+  void initialize() {
+    _markerData.subscribe();
+  }
+
   void dispose() {
-    ntConnection.unSubscribe(subscription);
+    _markerData.unsubscribe();
   }
 
   List<Marker> get markers {
-    final List<num> rawData =
-        (subscription.value as List<dynamic>?)?.cast<num>() ?? [];
+    final List<num> rawData = _markerData.value.cast<num>();
 
     List<Marker> parsedMarkers = [];
     // The list is [x, y, r, g, b, shapeId, x2, y2, r2, g2, b2, shapeId2, ...]
