@@ -604,6 +604,14 @@ class _DashboardPageState extends State<DashboardPage>
       ),
       callback: () => _addTrueSample('/Match/Commander/ResetGyro'),
     );
+    // Reset Intake Opener (Ctrl + A)
+    hotKeyManager.register(
+      HotKey(
+        LogicalKeyboardKey.keyA,
+        modifiers: [KeyModifier.control],
+      ),
+      callback: () => _addTrueSample('/Match/Commander/ResetIntakeOpener'),
+    );
     // Reset Turret (Ctrl + T)
     hotKeyManager.register(
       HotKey(
