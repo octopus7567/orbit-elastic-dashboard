@@ -604,15 +604,15 @@ class _DashboardPageState extends State<DashboardPage>
       ),
       callback: () => _addTrueSample('/Match/Commander/ResetGyro'),
     );
-    // Reset Gyro (Ctrl + F)
+    // Reset Convey Faults (Ctrl + W)
     hotKeyManager.register(
       HotKey(
-        LogicalKeyboardKey.keyF,
+        LogicalKeyboardKey.keyW,
         modifiers: [KeyModifier.control],
       ),
       callback: () => _addTrueSample('/Match/Commander/ResetConveyFaults'),
     );
-    // Reset Gyro (Ctrl + Z)
+    // Reset Swerver Heading (Ctrl + Z)
     hotKeyManager.register(
       HotKey(
         LogicalKeyboardKey.keyZ,
