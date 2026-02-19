@@ -170,7 +170,7 @@ class WidgetContainer extends StatelessWidget {
     this.opacity = 1.0,
     this.horizontalPadding = 7.5,
     this.verticalPadding = 7.5,
-    this.showTitle = false,
+    this.showTitle = true,
     this.cornerRadius = Defaults.cornerRadius,
   });
 
