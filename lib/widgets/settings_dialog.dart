@@ -445,7 +445,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
       children: [
         Flexible(
           child: DialogToggleSwitch(
-            initialValue: false,
+            initialValue: true,
             label: 'Auto Show Text Submit Button',
             onToggle: (value) async {
               await widget.onAutoSubmitButtonChanged?.call(value);

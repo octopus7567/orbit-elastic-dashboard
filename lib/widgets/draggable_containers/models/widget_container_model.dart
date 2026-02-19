@@ -164,7 +164,7 @@ abstract class WidgetContainerModel extends ChangeNotifier {
     required this.preferences,
     required Rect initialPosition,
     required String? title,
-    bool showTitle = false,
+    bool showTitle = true,
     bool enabled = false,
     this.minWidth = 128.0,
     this.minHeight = 128.0,
@@ -178,7 +178,7 @@ abstract class WidgetContainerModel extends ChangeNotifier {
   WidgetContainerModel.fromJson({
     required Map<String, dynamic> jsonData,
     required this.preferences,
-    bool showTitle = false,
+    bool showTitle = true,
     bool enabled = false,
     this.minWidth = 128.0,
     this.minHeight = 128.0,
@@ -211,7 +211,7 @@ abstract class WidgetContainerModel extends ChangeNotifier {
   }) {
     title = tryCast(jsonData['title']) ?? '';
 
-    showTitle = tryCast(jsonData['showTitle']) ?? false;
+    showTitle = tryCast(jsonData['showTitle']) ?? true;
 
     double x = tryCast(jsonData['x']) ?? 0.0;
 
@@ -307,6 +307,7 @@ abstract class WidgetContainerModel extends ChangeNotifier {
           flex: 23,
           child: DialogToggleSwitch(
             onToggle: (value) => showTitle = value,
+            //label: 'Show',
             initialValue: showTitle,
           ),
         ),

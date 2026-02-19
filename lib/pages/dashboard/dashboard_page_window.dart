@@ -56,7 +56,7 @@ mixin DashboardPageWindow on DashboardPageViewModel {
 
     // Re-adds the window frame, window manager's API for this is weird
     await windowManager.setTitleBarStyle(
-      TitleBarStyle.hidden,
+      TitleBarStyle.normal,
       windowButtonVisibility: false,
     );
   }
