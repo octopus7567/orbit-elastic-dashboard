@@ -45,3 +45,36 @@ class ToggleSwitch extends NTWidget {
     );
   }
 }
+/*
+class ToggleSwitchModel extends SingleTopicNTWidgetModel {
+  static const String modelType = ToggleSwitch.widgetType;
+
+  bool defaultValue = false;
+
+  ToggleSwitchModel({bool? defaultValue, 
+    required super.ntConnection, 
+    required super.preferences, 
+    required super.topic,
+    super.ntStructMeta,
+    super.dataType,
+    super.period,
+    }) {
+    this.defaultValue = defaultValue ?? false;
+  }
+
+  ToggleSwitchModel.fromJson({
+    required super.ntConnection,
+    required super.preferences,
+    required Map<String, dynamic> jsonData,
+  }) : super.fromJson(jsonData: jsonData) {
+    defaultValue = tryCast(jsonData['default_value']) ??
+        tryCast(jsonData['default']) ??
+        defaultValue;
+  }
+
+  @override
+  Map<String, dynamic> toJson() => {
+        ...super.toJson(),
+        'default_value': defaultValue,
+      };
+}*/

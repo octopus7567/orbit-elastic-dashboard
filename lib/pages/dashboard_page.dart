@@ -673,6 +673,7 @@ class _DashboardPageState extends State<DashboardPage>
             );
             model.switchToTab(i - 1);
           }
+          _addFalseSample('/SmartDashboard/AutoTabChanging');
         },
       );
     }
@@ -816,6 +817,14 @@ class _DashboardPageState extends State<DashboardPage>
     if (topic != null) {
       model.ntConnection.publishTopic(topic);
       model.ntConnection.updateDataFromTopic(topic, true);
+    }
+  }
+
+  void _addFalseSample(String topicName) {
+    NT4Topic? topic = model.ntConnection.getTopicFromName(topicName);
+    if (topic != null) {
+      model.ntConnection.publishTopic(topic);
+      model.ntConnection.updateDataFromTopic(topic, false);
     }
   }
 
