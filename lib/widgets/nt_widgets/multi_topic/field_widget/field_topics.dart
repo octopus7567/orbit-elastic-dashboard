@@ -1,3 +1,4 @@
+import 'package:elastic_dashboard/widgets/nt_widgets/multi_topic/field_widget/field_widget.dart' as field_widget;
 import 'package:flutter/material.dart';
 
 import 'package:elastic_dashboard/services/nt4_client.dart';
@@ -283,6 +284,7 @@ class CommanderTopics {
     // ntConnection.updateDataFromTopic(robotX, pose.dx);
     // ntConnection.updateDataFromTopic(robotY, pose.dy);
     ntConnection.updateDataFromTopic(robotXY, [pose.dx, pose.dy, 0.0]);
+    field_widget.pose = pose;
     // ntConnection.updateDataFromTopic(setNewPose, true);
   }
 }

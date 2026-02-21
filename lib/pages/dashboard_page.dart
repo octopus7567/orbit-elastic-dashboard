@@ -596,54 +596,56 @@ class _DashboardPageState extends State<DashboardPage>
       ),
       callback: model.exportLayout,
     );
-    // Reset Gyro (Ctrl + G)
-    hotKeyManager.register(
-      HotKey(
-        LogicalKeyboardKey.keyG,
-        modifiers: [KeyModifier.control],
-      ),
-      callback: () => _addTrueSample('/Match/Commander/ResetGyro'),
-    );
-    // Reset Convey Faults (Ctrl + W)
-    hotKeyManager.register(
-      HotKey(
-        LogicalKeyboardKey.keyW,
-        modifiers: [KeyModifier.control],
-      ),
-      callback: () => _addTrueSample('/Match/Commander/ResetConveyFaults'),
-    );
-    // Reset Swerver Heading (Ctrl + Z)
-    hotKeyManager.register(
-      HotKey(
-        LogicalKeyboardKey.keyZ,
-        modifiers: [KeyModifier.control],
-      ),
-      callback: () => _addTrueSample('/Match/Commander/ResetSwerveHeading'),
-    );
-    // Reset Intake Opener (Ctrl + A)
-    hotKeyManager.register(
-      HotKey(
-        LogicalKeyboardKey.keyA,
-        modifiers: [KeyModifier.control],
-      ),
-      callback: () => _addTrueSample('/Match/Commander/ResetIntakeOpener'),
-    );
-    // Reset Turret (Ctrl + T)
-    hotKeyManager.register(
-      HotKey(
-        LogicalKeyboardKey.keyT,
-        modifiers: [KeyModifier.control],
-      ),
-      callback: () => _addTrueSample('/Match/Commander/ResetTurret'),
-    );
-    // Reset Canopy (Ctrl + C)
-    hotKeyManager.register(
-      HotKey(
-        LogicalKeyboardKey.keyC,
-        modifiers: [KeyModifier.control],
-      ),
-      callback: () => _addTrueSample('/Match/Commander/ResetCanopy'),
-    );
+
+    // // Reset Gyro (Ctrl + G)
+    // hotKeyManager.register(
+    //   HotKey(
+    //     LogicalKeyboardKey.keyG,
+    //     modifiers: [KeyModifier.control],
+    //   ),
+    //   callback: () => _addSample('/Match/Commander/ResetGyro', true),
+    // );
+    // // Reset Convey Faults (Ctrl + W)
+    // hotKeyManager.register(
+    //   HotKey(
+    //     LogicalKeyboardKey.keyW,
+    //     modifiers: [KeyModifier.control],
+    //   ),
+    //   callback: () => _addSample('/Match/Commander/ResetConveyFaults', true),
+    // );
+    // // Reset Swerver Heading (Ctrl + Z)
+    // hotKeyManager.register(
+    //   HotKey(
+    //     LogicalKeyboardKey.keyZ,
+    //     modifiers: [KeyModifier.control],
+    //   ),
+    //   callback: () => _addSample('/Match/Commander/ResetSwerveHeading', true),
+    // );
+    // // Reset Intake Opener (Ctrl + A)
+    // hotKeyManager.register(
+    //   HotKey(
+    //     LogicalKeyboardKey.keyA,
+    //     modifiers: [KeyModifier.control],
+    //   ),
+    //   callback: () => _addSample('/Match/Commander/ResetIntakeOpener', true),
+    // );
+    // // Reset Turret (Ctrl + T)
+    // hotKeyManager.register(
+    //   HotKey(
+    //     LogicalKeyboardKey.keyT,
+    //     modifiers: [KeyModifier.control],
+    //   ),
+    //   callback: () => _addSample('/Match/Commander/ResetTurret', true),
+    // );
+    //// Reset Canopy (Ctrl + C)
+    // hotKeyManager.register(
+    //   HotKey(
+    //     LogicalKeyboardKey.keyC,
+    //     modifiers: [KeyModifier.control],
+    //   ),
+    //   callback: () => _addSample('/Match/Commander/ResetCanopy', true),
+    // );
+
     // Download from robot (Ctrl + D)
     hotKeyManager.register(
       HotKey(LogicalKeyboardKey.keyD, modifiers: [KeyModifier.control]),
@@ -673,7 +675,7 @@ class _DashboardPageState extends State<DashboardPage>
             );
             model.switchToTab(i - 1);
           }
-          _addFalseSample('/SmartDashboard/AutoTabChanging');
+          _addSample('/SmartDashboard/AutoTabChanging', false);
         },
       );
     }
@@ -812,19 +814,11 @@ class _DashboardPageState extends State<DashboardPage>
     );
   }
 
-  void _addTrueSample(String topicName) {
+  void _addSample(String topicName, dynamic value) {
     NT4Topic? topic = model.ntConnection.getTopicFromName(topicName);
     if (topic != null) {
       model.ntConnection.publishTopic(topic);
-      model.ntConnection.updateDataFromTopic(topic, true);
-    }
-  }
-
-  void _addFalseSample(String topicName) {
-    NT4Topic? topic = model.ntConnection.getTopicFromName(topicName);
-    if (topic != null) {
-      model.ntConnection.publishTopic(topic);
-      model.ntConnection.updateDataFromTopic(topic, false);
+      model.ntConnection.updateDataFromTopic(topic, value);
     }
   }
 

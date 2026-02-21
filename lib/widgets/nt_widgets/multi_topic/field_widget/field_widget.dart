@@ -26,70 +26,12 @@ extension _SizeUtils on Size {
   );
 }
 
+Offset pose = Offset.zero;
+
 class FieldWidget extends NTWidget {
   static const String widgetType = 'Field';
 
   const FieldWidget({super.key});
-
-  // Widget _getTransformedFieldObject(
-  //   FieldWidgetModel model, {
-  //   required FieldObject object,
-  //   required Offset fieldCenter,
-  //   required double scaleReduction,
-  //   Size? objectSize,
-  // }) {
-  //   final double x = (object.x.isFinite && !object.x.isNaN) ? object.x : 0;
-  //   final double y = (object.y.isFinite && !object.y.isNaN) ? object.y : 0;
-  //   final double angleRadians = (object.angle.isFinite && !object.angle.isNaN)
-  //       ? object.angle
-  //       : 0;
-
-  //   double xFromCenter =
-  //       (x * model.field.pixelsPerMeterHorizontal - fieldCenter.dx) *
-  //       scaleReduction;
-
-  //   double yFromCenter =
-  //       (fieldCenter.dy - (y * model.field.pixelsPerMeterVertical)) *
-  //       scaleReduction;
-
-  //   double width =
-  //       (objectSize?.width ?? model.otherObjectSize) *
-  //       model.field.pixelsPerMeterHorizontal *
-  //       scaleReduction;
-
-  //   double length =
-  //       (objectSize?.height ?? model.otherObjectSize) *
-  //       model.field.pixelsPerMeterVertical *
-  //       scaleReduction;
-
-  //   Matrix4 transform = Matrix4.translationValues(xFromCenter, yFromCenter, 0.0)
-  //     ..rotateZ(-angleRadians);
-
-  //   Widget otherObject = Container(
-  //     alignment: Alignment.center,
-  //     constraints: const BoxConstraints(minWidth: 4.0, minHeight: 4.0),
-  //     decoration: BoxDecoration(
-  //       color: Colors.black.withValues(alpha: 0.35),
-  //       border: Border.all(
-  //         color: model.robotColor,
-  //         width: 0.125 * min(width, length),
-  //       ),
-  //     ),
-  //     width: length,
-  //     height: width,
-  //     child: CustomPaint(
-  //       size: Size(length * 0.275, width * 0.275),
-  //       painter: TrianglePainter(strokeWidth: 0.08 * min(width, length)),
-  //     ),
-  //   );
-
-  //   return Transform(
-  //     origin: Offset(length, width) / 2,
-  //     transform: transform,
-  //     child: otherObject,
-  //   );
-  // }
-
 
   Offset _getTrajectoryPointOffset(
     FieldWidgetModel model, {
@@ -115,189 +57,9 @@ class FieldWidget extends NTWidget {
     return Offset(xFromCenter, yFromCenter);
   }
 
-  // List<List<Offset>> _getTrajectoryPoints({
-  //   required FieldWidgetModel model,
-  //   required Offset fieldCenter,
-  //   required double scaleReduction,
-  // }) {
-  //   if (!model.showTrajectories) return [];
-
-  //   List<List<Offset>> trajectoryPoints = [];
-
-  //   final trajectories = model.getAllObjects().where(
-  //     (e) => e.type == FieldObjectType.trajectory,
-  //   );
-
-  //   for (final trajectory in trajectories) {
-  //     trajectoryPoints.add(
-  //       trajectory.poses!
-  //           .map(
-  //             (e) => _getTrajectoryPointOffset(
-  //               model,
-  //               x: e.x,
-  //               y: e.y,
-  //               fieldCenter: fieldCenter,
-  //               scaleReduction: scaleReduction,
-  //             ),
-  //           )
-  //           .toList(),
-  //     );
-  //   }
-
-  //   return trajectoryPoints;
-  // }
-
-  // List<Widget> _getOtherObjectWidgets({
-  //   required FieldWidgetModel model,
-  //   required Offset fieldCenter,
-  //   required double scaleReduction,
-  // }) {
-  //   if (!model.showOtherObjects) return [];
-
-  //   List<Widget> otherObjectsWidgets = [];
-
-  //   final otherObjects = model.getAllObjects().where(
-  //     (e) => e.type == FieldObjectType.otherObject,
-  //   );
-
-  //   for (final object in otherObjects) {
-  //     otherObjectsWidgets.add(
-  //       _getTransformedFieldObject(
-  //         model,
-  //         object: object,
-  //         fieldCenter: fieldCenter,
-  //         scaleReduction: scaleReduction,
-  //       ),
-  //     );
-  //   }
-
-  //   return otherObjectsWidgets;
-  // }
-
-  // Widget _buildRobotOverlay({
-  //   required FieldWidgetModel model,
-  //   required Size size,
-  //   required double scaleReduction,
-  //   required Offset fieldCenter,
-  //   required double rotatedScaleReduction,
-  //   required BoxConstraints constraints,
-  //   required FittedSizes fittedSizes,
-  //   required Offset fittedCenter,
-  //   required TransformationController controller,
-  // }) {
-  //   final FieldObject robotObject = model.getRobotObject();
-
-  //   Widget robot = _getTransformedFieldObject(
-  //     model,
-  //     object: robotObject,
-  //     fieldCenter: fieldCenter,
-  //     scaleReduction: scaleReduction,
-  //     objectSize: Size(
-  //       model.robotWidthMeters,
-  //       model.robotLengthMeters,
-  //     ),
-  //   );
-
-  //   Matrix4 innerTransform = Matrix4.identity()
-  //     ..translateByDouble(size.width / 2, size.height / 2, 0, 1)
-  //     ..scaleByDouble(
-  //       rotatedScaleReduction / scaleReduction,
-  //       rotatedScaleReduction / scaleReduction,
-  //       rotatedScaleReduction / scaleReduction,
-  //       1,
-  //     )
-  //     ..rotateZ(radians(model.fieldRotation))
-  //     ..translateByDouble(-size.width / 2, -size.height / 2, 0, 1);
-
-  //   final Matrix4 totalTransform = controller.value * innerTransform;
-
-  //   double xFromCenter =
-  //       (robotObject.x * model.field.pixelsPerMeterHorizontal -
-  //           fieldCenter.dx) *
-  //       scaleReduction;
-
-  //   double yFromCenter =
-  //       (fieldCenter.dy -
-  //           (robotObject.y * model.field.pixelsPerMeterVertical)) *
-  //       scaleReduction;
-
-  //   Offset robotInStack =
-  //       size.center(Offset.zero) + Offset(xFromCenter, yFromCenter);
-
-  //   Offset robotInViewport = MatrixUtils.transformPoint(
-  //     totalTransform,
-  //     robotInStack,
-  //   );
-
-  //   Widget? indicator;
-  //   if (robotInViewport.dx < 0 ||
-  //       robotInViewport.dx > size.width ||
-  //       robotInViewport.dy < 0 ||
-  //       robotInViewport.dy > size.height) {
-  //     Offset snappedViewport = Offset(
-  //       robotInViewport.dx.clamp(0, size.width),
-  //       robotInViewport.dy.clamp(0, size.height),
-  //     );
-
-  //     Offset snappedInStack = MatrixUtils.transformPoint(
-  //       Matrix4.inverted(totalTransform),
-  //       snappedViewport,
-  //     );
-
-  //     Offset indicatorPosition = snappedInStack - size.center(Offset.zero);
-
-  //     indicator = Transform.translate(
-  //       offset: indicatorPosition,
-  //       child: Container(
-  //         width:
-  //             model.robotWidthMeters *
-  //             model.field.pixelsPerMeterHorizontal *
-  //             scaleReduction /
-  //             totalTransform.getMaxScaleOnAxis(),
-  //         height:
-  //             model.robotLengthMeters *
-  //             model.field.pixelsPerMeterVertical *
-  //             scaleReduction /
-  //             totalTransform.getMaxScaleOnAxis(),
-  //         decoration: BoxDecoration(
-  //           color: model.robotColor,
-  //           shape: BoxShape.rectangle,
-  //           borderRadius: BorderRadius.circular(2.5),
-  //         ),
-  //       ),
-  //     );
-  //   }
-
-  //   return Transform.scale(
-  //     scale: rotatedScaleReduction / scaleReduction,
-  //     child: Transform.rotate(
-  //       angle: radians(model.fieldRotation),
-  //       child: Stack(
-  //         alignment: Alignment.center,
-  //         children: [
-  //           SizedBox(
-  //             height: constraints.maxHeight,
-  //             width: constraints.maxWidth,
-  //           ),
-  //           if (indicator == null || model.showRobotOutsideWidget)
-  //             robot
-  //           else
-  //             indicator,
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     FieldWidgetModel model = cast(context.watch<NTWidgetModel>());
-
-    // List<NT4Subscription> listeners = [];
-    // listeners.add(model.robotSubscription);
-    // if (model.showOtherObjects || model.showTrajectories) {
-    //   listeners.addAll(model.otherObjectSubscriptions);
-    // }
 
     return LayoutBuilder(
       builder: (context, constraints) => ListenableBuilder(
@@ -817,7 +579,7 @@ class FieldWidget extends NTWidget {
                               ],
                             ),
                           ),
-                                        ),
+                        ),
                       ),
                     ),
                   ),
@@ -847,11 +609,45 @@ class FieldWidget extends NTWidget {
                               
                             ),
                       ),
-                    ),                 
+                    ),
+                  ),
+                ),
+                Positioned(
+                  //for right sided:
+                  // bottom: 10,
+                  // left: size.width-40,
+                  top: size.height-30,
+                  left: 0,
+                  right: 0,                  
+                   child: Center(
+                  //for right sided:
+                    // child: RotatedBox(
+                    // quarterTurns: 3, // rotate -90°
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4.0,
+                          vertical: 2.0,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 122, 79, 14),
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                        child: Text(
+                          'X: ${pose.dx.toStringAsFixed(2)}, Y: ${pose.dy.toStringAsFixed(2)}',
+                          style:
+                              Theme.of(
+                                context,
+                              ).textTheme.bodySmall?.copyWith(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                        ),
+                      ),
+                    // ),
                   ),
                 ),
               ],
-          ),
+            ),
           );
         },
       ),
