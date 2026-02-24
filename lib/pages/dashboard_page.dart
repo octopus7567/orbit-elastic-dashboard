@@ -363,6 +363,10 @@ abstract class DashboardPageViewModel extends ChangeNotifier {
 
   void unlockLayout() {}
 
+  void enableAutoResizeToDS() {}
+
+  void disableAutoResizeToDS() {}
+
   void displayAddWidgetDialog() {
     logger.info('Displaying add widget dialog');
     addWidgetDialogVisible = true;
@@ -597,6 +601,42 @@ class _DashboardPageState extends State<DashboardPage>
       callback: model.exportLayout,
     );
 
+    //toggle LOCK (Ctrl+L)
+    hotKeyManager.register(
+      HotKey(
+        LogicalKeyboardKey.keyL,
+        modifiers: [KeyModifier.control],
+      ),
+      callback: () {
+        if (preferences.getBool(PrefKeys.layoutLocked) ??
+              Defaults.layoutLocked) {
+            model.unlockLayout();
+        }
+        else {
+          model.lockLayout();
+        }
+      },
+    );
+
+    //toggle DOCK (Ctrl+K)
+    hotKeyManager.register(
+      HotKey(
+        LogicalKeyboardKey.keyK,
+        modifiers: [KeyModifier.control],
+      ),
+      callback: () {
+        if (preferences.getBool(PrefKeys.autoResizeToDS) ??
+              Defaults.autoResizeToDS) {
+                model.disableAutoResizeToDS();
+                //say debug, confirmed working, but the the window don't update
+                //logger.debug('DISABLED Auto Resize to Driver Station via keyboard shortcut');
+        }
+        else {
+            model.enableAutoResizeToDS();
+            //logger.debug('ENABLED Auto Resize to Driver Station via keyboard shortcut');
+        }
+      },
+    );
     // // Reset Gyro (Ctrl + G)
     // hotKeyManager.register(
     //   HotKey(

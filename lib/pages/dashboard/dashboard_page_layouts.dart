@@ -510,4 +510,18 @@ mixin DashboardPageLayouts on DashboardPageViewModel {
     }
     await preferences.setBool(PrefKeys.layoutLocked, false);
   }
+
+  @override
+  void enableAutoResizeToDS() async {
+    onDriverStationDocked();
+    await preferences.setBool(PrefKeys.autoResizeToDS, true);
+    //update window size
+    
+  }
+
+  @override
+  void disableAutoResizeToDS() async {
+    onDriverStationUndocked();
+    await preferences.setBool(PrefKeys.autoResizeToDS, false);
+  }
 }

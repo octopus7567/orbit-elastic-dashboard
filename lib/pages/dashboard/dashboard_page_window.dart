@@ -46,6 +46,7 @@ mixin DashboardPageWindow on DashboardPageViewModel {
     await windowManager.setResizable(false);
 
     await windowManager.setAsFrameless();
+
   }
 
   @override
@@ -59,6 +60,8 @@ mixin DashboardPageWindow on DashboardPageViewModel {
       TitleBarStyle.normal,
       windowButtonVisibility: false,
     );
+
+    await windowManager.maximize();
   }
 
   @override
