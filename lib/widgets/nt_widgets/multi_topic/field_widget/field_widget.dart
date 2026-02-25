@@ -497,52 +497,52 @@ class FieldWidget extends NTWidget {
                                       center: imageDisplaySize.toOffset / 2,
                                       field: model.field,
                                       poses: [
-                                        model.visionTopics.closeCamPose,
+                                        // model.visionTopics.closeCamPose,
                                         model.visionTopics.farCamPose,
-                                        model.visionTopics.leftCamPose,
-                                        model.visionTopics.rightCamPose,
+                                        // model.visionTopics.leftCamPose,
+                                        // model.visionTopics.rightCamPose,
                                       ],
                                       statuses: [
-                                        [
-                                          model
-                                              .visionTopics
-                                              .closeCamLocation
-                                              .value,
-                                          model
-                                              .visionTopics
-                                              .closeCamHeading
-                                              .value,
-                                        ],
-                                        [
-                                          model
-                                              .visionTopics
-                                              .farCamLocation
-                                              .value,
-                                          model
-                                              .visionTopics
-                                              .farCamHeading
-                                              .value,
-                                        ],
-                                        [
-                                          model
-                                              .visionTopics
-                                              .leftCamLocation
-                                              .value,
-                                          model
-                                              .visionTopics
-                                              .leftCamHeading
-                                              .value,
-                                        ],
-                                        [
-                                          model
-                                              .visionTopics
-                                              .rightCamLocation
-                                              .value,
-                                          model
-                                              .visionTopics
-                                              .rightCamHeading
-                                              .value,
-                                        ],
+                                        // [
+                                        //   model
+                                        //       .visionTopics
+                                        //       .closeCamLocation
+                                        //       .value,
+                                        //   model
+                                        //       .visionTopics
+                                        //       .closeCamHeading
+                                        //       .value,
+                                        // ],
+                                        // [
+                                        //   model
+                                        //       .visionTopics
+                                        //       .farCamLocation
+                                        //       .value,
+                                        //   model
+                                        //       .visionTopics
+                                        //       .farCamHeading
+                                        //       .value,
+                                        // ],
+                                        // [
+                                        //   model
+                                        //       .visionTopics
+                                        //       .leftCamLocation
+                                        //       .value,
+                                        //   model
+                                        //       .visionTopics
+                                        //       .leftCamHeading
+                                        //       .value,
+                                        // ],
+                                        // [
+                                        //   model
+                                        //       .visionTopics
+                                        //       .rightCamLocation
+                                        //       .value,
+                                        //   model
+                                        //       .visionTopics
+                                        //       .rightCamHeading
+                                        //       .value,
+                                        // ],
                                       ],
                                       color: model.visionTargetColor,
                                       markerSize: model.visionMarkerSize,

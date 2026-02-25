@@ -42,124 +42,124 @@ class VisionTopics {
   final NTConnection ntConnection;
   final double period;
 
-  late final SubscribedTopic<double> closeCamX;
-  late final SubscribedTopic<double> closeCamY;
+  // late final SubscribedTopic<double> closeCamX;
+  // late final SubscribedTopic<double> closeCamY;
   late final SubscribedTopic<double> farCamX;
   late final SubscribedTopic<double> farCamY;
-  late final SubscribedTopic<double> leftCamX;
-  late final SubscribedTopic<double> leftCamY;
-  late final SubscribedTopic<double> rightCamX;
-  late final SubscribedTopic<double> rightCamY;
+  // late final SubscribedTopic<double> leftCamX;
+  // late final SubscribedTopic<double> leftCamY;
+  // late final SubscribedTopic<double> rightCamX;
+  // late final SubscribedTopic<double> rightCamY;
 
-  late final SubscribedTopic<bool> rightCamLocation;
-  late final SubscribedTopic<bool> rightCamHeading;
-  late final SubscribedTopic<bool> leftCamLocation;
-  late final SubscribedTopic<bool> leftCamHeading;
-  late final SubscribedTopic<bool> closeCamLocation;
-  late final SubscribedTopic<bool> closeCamHeading;
+  // late final SubscribedTopic<bool> rightCamLocation;
+  // late final SubscribedTopic<bool> rightCamHeading;
+  // late final SubscribedTopic<bool> leftCamLocation;
+  // late final SubscribedTopic<bool> leftCamHeading;
+  // late final SubscribedTopic<bool> closeCamLocation;
+  // late final SubscribedTopic<bool> closeCamHeading;
   late final SubscribedTopic<bool> farCamLocation;
   late final SubscribedTopic<bool> farCamHeading;
 
   late final List<SubscribedTopic> topics;
 
   VisionTopics({required this.ntConnection, this.period = 0.1}) {
-    closeCamX = SubscribedTopic(
-      ntConnection: ntConnection,
-      topic: '/Match/Pose/CloseCamX',
-      defaultValue: 0.0,
-    );
-    closeCamY = SubscribedTopic(
-      ntConnection: ntConnection,
-      topic: '/Match/Pose/CloseCamY',
-      defaultValue: 0.0,
-    );
+    // closeCamX = SubscribedTopic(
+    //   ntConnection: ntConnection,
+    //   topic: '/Match/Pose/CloseCamX',
+    //   defaultValue: 0.0,
+    // );
+    // closeCamY = SubscribedTopic(
+    //   ntConnection: ntConnection,
+    //   topic: '/Match/Pose/CloseCamY',
+    //   defaultValue: 0.0,
+    // );
     farCamX = SubscribedTopic(
       ntConnection: ntConnection,
-      topic: '/Match/Pose/FarCamX',
+      topic: '/SmartDashboard/LogData/LL/limelight-one/pos/X',
       defaultValue: 0.0,
     );
     farCamY = SubscribedTopic(
       ntConnection: ntConnection,
-      topic: '/Match/Pose/FarCamY',
+      topic: '/SmartDashboard/LogData/LL/limelight-one/pos/Y',
       defaultValue: 0.0,
     );
-    leftCamX = SubscribedTopic(
-      ntConnection: ntConnection,
-      topic: '/Match/Pose/LeftCamX',
-      defaultValue: 0.0,
-    );
-    leftCamY = SubscribedTopic(
-      ntConnection: ntConnection,
-      topic: '/Match/Pose/LeftCamY',
-      defaultValue: 0.0,
-    );
-    rightCamX = SubscribedTopic(
-      ntConnection: ntConnection,
-      topic: '/Match/Pose/RightCamX',
-      defaultValue: 0.0,
-    );
-    rightCamY = SubscribedTopic(
-      ntConnection: ntConnection,
-      topic: '/Match/Pose/RightCamY',
-      defaultValue: 0.0,
-    );
+    // leftCamX = SubscribedTopic(
+    //   ntConnection: ntConnection,
+    //   topic: '/Match/Pose/LeftCamX',
+    //   defaultValue: 0.0,
+    // );
+    // leftCamY = SubscribedTopic(
+    //   ntConnection: ntConnection,
+    //   topic: '/Match/Pose/LeftCamY',
+    //   defaultValue: 0.0,
+    // );
+    // rightCamX = SubscribedTopic(
+    //   ntConnection: ntConnection,
+    //   topic: '/Match/Pose/RightCamX',
+    //   defaultValue: 0.0,
+    // );
+    // rightCamY = SubscribedTopic(
+    //   ntConnection: ntConnection,
+    //   topic: '/Match/Pose/RightCamY',
+    //   defaultValue: 0.0,
+    // );
 
-    rightCamLocation = SubscribedTopic(
-      ntConnection: ntConnection,
-      topic: '/Match/Streams/RightLime/Location',
-      defaultValue: false,
-    );
-    rightCamHeading = SubscribedTopic(
-      ntConnection: ntConnection,
-      topic: '/Match/Streams/RightLime/Heading',
-      defaultValue: false,
-    );
-    leftCamLocation = SubscribedTopic(
-      ntConnection: ntConnection,
-      topic: '/Match/Streams/LeftLime/Location',
-      defaultValue: false,
-    );
-    leftCamHeading = SubscribedTopic(
-      ntConnection: ntConnection,
-      topic: '/Match/Streams/LeftLime/Heading',
-      defaultValue: false,
-    );
-    closeCamLocation = SubscribedTopic(
-      ntConnection: ntConnection,
-      topic: '/Match/Streams/CloseCam/Location',
-      defaultValue: false,
-    );
-    closeCamHeading = SubscribedTopic(
-      ntConnection: ntConnection,
-      topic: '/Match/Streams/CloseCam/Heading',
-      defaultValue: false,
-    );
+    // rightCamLocation = SubscribedTopic(
+    //   ntConnection: ntConnection,
+    //   topic: '/Match/Streams/RightLime/Location',
+    //   defaultValue: false,
+    // );
+    // rightCamHeading = SubscribedTopic(
+    //   ntConnection: ntConnection,
+    //   topic: '/Match/Streams/RightLime/Heading',
+    //   defaultValue: false,
+    // );
+    // leftCamLocation = SubscribedTopic(
+    //   ntConnection: ntConnection,
+    //   topic: '/Match/Streams/LeftLime/Location',
+    //   defaultValue: false,
+    // );
+    // leftCamHeading = SubscribedTopic(
+    //   ntConnection: ntConnection,
+    //   topic: '/Match/Streams/LeftLime/Heading',
+    //   defaultValue: false,
+    // );
+    // closeCamLocation = SubscribedTopic(
+    //   ntConnection: ntConnection,
+    //   topic: '/Match/Streams/CloseCam/Location',
+    //   defaultValue: false,
+    // );
+    // closeCamHeading = SubscribedTopic(
+    //   ntConnection: ntConnection,
+    //   topic: '/Match/Streams/CloseCam/Heading',
+    //   defaultValue: false,
+    // );
     farCamLocation = SubscribedTopic(
       ntConnection: ntConnection,
-      topic: '/Match/Streams/FarCam/Location',
+      topic: '/SmartDashboard/LL/limelight-one/mt2/X',
       defaultValue: false,
     );
     farCamHeading = SubscribedTopic(
       ntConnection: ntConnection,
-      topic: '/Match/Streams/FarCam/Heading',
+      topic: '/SmartDashboard/LL/limelight-one/mt2/Y',
       defaultValue: false,
     );
 
     topics = [
-      closeCamX,
-      closeCamY,
+      // closeCamX,
+      // closeCamY,
       farCamX,
       farCamY,
-      leftCamX,
-      leftCamY,
-      rightCamX,
-      rightCamY,
-      rightCamLocation,
-      rightCamHeading,
-      leftCamLocation,
-      leftCamHeading,
-      closeCamLocation,
-      closeCamHeading,
+      // leftCamX,
+      // leftCamY,
+      // rightCamX,
+      // rightCamY,
+      // rightCamLocation,
+      // rightCamHeading,
+      // leftCamLocation,
+      // leftCamHeading,
+      // closeCamLocation,
+      // closeCamHeading,
       farCamLocation,
       farCamHeading,
     ];
@@ -180,10 +180,10 @@ class VisionTopics {
   List<Listenable> get listenables =>
       topics.map((topic) => topic.subscription).toList();
 
-  Offset get closeCamPose => Offset(closeCamX.value, closeCamY.value);
+  // Offset get closeCamPose => Offset(closeCamX.value, closeCamY.value);
   Offset get farCamPose => Offset(farCamX.value, farCamY.value);
-  Offset get leftCamPose => Offset(leftCamX.value, leftCamY.value);
-  Offset get rightCamPose => Offset(rightCamX.value, rightCamY.value);
+  // Offset get leftCamPose => Offset(leftCamX.value, leftCamY.value);
+  // Offset get rightCamPose => Offset(rightCamX.value, rightCamY.value);
 }
 
 // Manages all game-piece-related NT topics.

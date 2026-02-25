@@ -419,13 +419,29 @@ class OtherObjectsPainter extends CustomPainter {
     final Paint paint = Paint()
       ..color = robotColor
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
+      ..strokeWidth = 0.5;
     final Rect rect = Rect.fromCenter(
       center: Offset.zero,
       width: length,
       height: width,
     );
     canvas.drawRect(rect, paint);
+
+    // Draw a cross at center
+    final Paint crossPaint = Paint()
+      ..color = Colors.redAccent
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.25;
+    final Path crossPath = Path()
+      ..moveTo(length/2, -width/2)
+      ..lineTo(-length/2, width/2)
+      ..moveTo(-length/2, -width/2)
+      ..lineTo(length/2, width/2)
+      ..close();
+    canvas.drawPath(crossPath, crossPaint);
+
+    
+    canvas.drawCircle(Offset.zero, width / 4, crossPaint..color = Colors.pinkAccent);
 
     canvas.restore();
   }

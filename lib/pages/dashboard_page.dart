@@ -618,10 +618,10 @@ class _DashboardPageState extends State<DashboardPage>
       },
     );
 
-    //toggle DOCK (Ctrl+K)
+    //toggle DOCK (Ctrl+M)
     hotKeyManager.register(
       HotKey(
-        LogicalKeyboardKey.keyK,
+        LogicalKeyboardKey.keyM,
         modifiers: [KeyModifier.control],
       ),
       callback: () {
