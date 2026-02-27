@@ -119,7 +119,7 @@ class VisionPainter extends CustomPainter {
   final Offset center;
   final Field field;
   final List<Offset> poses;
-  final List<List<bool>> statuses;
+  //final List<List<bool>> statuses;
   final Color color;
   final double markerSize;
   final double scale;
@@ -128,7 +128,7 @@ class VisionPainter extends CustomPainter {
     required this.center,
     required this.field,
     required this.poses,
-    required this.statuses,
+    //required this.statuses,
     required this.color,
     required this.markerSize,
     required this.scale,
@@ -142,8 +142,8 @@ class VisionPainter extends CustomPainter {
 
     for (int i = 0; i < poses.length; i++) {
       final Offset pose = poses[i];
-      final bool locationAligned = statuses[i][0];
-      final bool headingAligned = statuses[i][1];
+      //final bool locationAligned = statuses[i][0];
+      //final bool headingAligned = statuses[i][1];
 
       double xFromCenter =
           (pose.dx * field.pixelsPerMeterHorizontal - field.center.dx) * scale;
@@ -155,26 +155,26 @@ class VisionPainter extends CustomPainter {
         center.dy + yFromCenter,
       );
 
-      if (locationAligned) {
-        if (headingAligned) {
-          // Triangle
-          final Path trianglePath = Path()
-            ..moveTo(markerCenter.dx, markerCenter.dy - markerSize / 2)
-            ..lineTo(
-              markerCenter.dx + markerSize / 2,
-              markerCenter.dy + markerSize / 2,
-            )
-            ..lineTo(
-              markerCenter.dx - markerSize / 2,
-              markerCenter.dy + markerSize / 2,
-            )
-            ..close();
-          canvas.drawPath(trianglePath, paint);
-        } else {
-          // Circle
-          canvas.drawCircle(markerCenter, markerSize / 2, paint);
-        }
-      } else {
+      // if (locationAligned) {
+      //   if (headingAligned) {
+      //     // Triangle
+      //     final Path trianglePath = Path()
+      //       ..moveTo(markerCenter.dx, markerCenter.dy - markerSize / 2)
+      //       ..lineTo(
+      //         markerCenter.dx + markerSize / 2,
+      //         markerCenter.dy + markerSize / 2,
+      //       )
+      //       ..lineTo(
+      //         markerCenter.dx - markerSize / 2,
+      //         markerCenter.dy + markerSize / 2,
+      //       )
+      //       ..close();
+      //     canvas.drawPath(trianglePath, paint);
+      //   } else {
+      //     // Circle
+      //     canvas.drawCircle(markerCenter, markerSize / 2, paint);
+      //   }
+      // } else {
         // Rectangle
         final Rect rect = Rect.fromCenter(
           center: markerCenter,
@@ -182,14 +182,14 @@ class VisionPainter extends CustomPainter {
           height: markerSize,
         );
         canvas.drawRect(rect, paint);
-      }
+      // }
     }
   }
 
   @override
   bool shouldRepaint(covariant VisionPainter oldDelegate) =>
       oldDelegate.poses != poses ||
-      oldDelegate.statuses != statuses ||
+      //oldDelegate.statuses != statuses ||
       oldDelegate.color != color;
 }
 

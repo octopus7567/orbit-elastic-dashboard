@@ -1,3 +1,4 @@
+
 import 'package:elastic_dashboard/widgets/nt_widgets/multi_topic/field_widget/field_widget.dart' as field_widget;
 import 'package:flutter/material.dart';
 
@@ -44,8 +45,8 @@ class VisionTopics {
 
   // late final SubscribedTopic<double> closeCamX;
   // late final SubscribedTopic<double> closeCamY;
-  late final SubscribedTopic<double> farCamX;
-  late final SubscribedTopic<double> farCamY;
+  // late final SubscribedTopic<double> farCamX;
+  // late final SubscribedTopic<double> farCamY;
   // late final SubscribedTopic<double> leftCamX;
   // late final SubscribedTopic<double> leftCamY;
   // late final SubscribedTopic<double> rightCamX;
@@ -57,8 +58,14 @@ class VisionTopics {
   // late final SubscribedTopic<bool> leftCamHeading;
   // late final SubscribedTopic<bool> closeCamLocation;
   // late final SubscribedTopic<bool> closeCamHeading;
-  late final SubscribedTopic<bool> farCamLocation;
-  late final SubscribedTopic<bool> farCamHeading;
+  // late final SubscribedTopic<bool> farCamLocation;
+  // late final SubscribedTopic<bool> farCamHeading;
+
+  //late final SubscribedTopic<List<double>> _target_pose;
+  late final SubscribedTopic<List<dynamic>> dtarget_pose;//THIS! THIS WORKS
+
+  
+  NT4Subscription get subscription => dtarget_pose.subscription;
 
   late final List<SubscribedTopic> topics;
 
@@ -73,16 +80,16 @@ class VisionTopics {
     //   topic: '/Match/Pose/CloseCamY',
     //   defaultValue: 0.0,
     // );
-    farCamX = SubscribedTopic(
-      ntConnection: ntConnection,
-      topic: '/SmartDashboard/LogData/LL/limelight-one/pos/X',
-      defaultValue: 0.0,
-    );
-    farCamY = SubscribedTopic(
-      ntConnection: ntConnection,
-      topic: '/SmartDashboard/LogData/LL/limelight-one/pos/Y',
-      defaultValue: 0.0,
-    );
+    // farCamX = SubscribedTopic(
+    //   ntConnection: ntConnection,
+    //   topic: '/SmartDashboard/LogData/LL/limelight-one/pos/X',
+    //   defaultValue: 0.0,
+    // );
+    // farCamY = SubscribedTopic(
+    //   ntConnection: ntConnection,
+    //   topic: '/SmartDashboard/LogData/LL/limelight-one/pos/Y',
+    //   defaultValue: 0.0,
+    // );
     // leftCamX = SubscribedTopic(
     //   ntConnection: ntConnection,
     //   topic: '/Match/Pose/LeftCamX',
@@ -134,22 +141,34 @@ class VisionTopics {
     //   topic: '/Match/Streams/CloseCam/Heading',
     //   defaultValue: false,
     // );
-    farCamLocation = SubscribedTopic(
+    // farCamLocation = SubscribedTopic(
+    //   ntConnection: ntConnection,
+    //   topic: '/SmartDashboard/LL/limelight-one/mt2/X',
+    //   defaultValue: false,
+    // );
+    // farCamHeading = SubscribedTopic(
+    //   ntConnection: ntConnection,
+    //   topic: '/SmartDashboard/LL/limelight-one/mt2/Y',
+    //   defaultValue: false,
+    // );
+    // _target_pose = SubscribedTopic(
+    //   ntConnection: ntConnection,
+    //   topic: './limelight-one/targetpose_robotspace',//#TODO: figure out why it's not getting the values
+    //   //topic: '/limelight-one/rawfiducials'
+    //   defaultValue: const <Struct>[8.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0], // [8.0, 4.0, 0.0, 0.0, 0.0, 0.0],//XYZ, QYZ
+    // );
+    dtarget_pose = SubscribedTopic(
       ntConnection: ntConnection,
-      topic: '/SmartDashboard/LL/limelight-one/mt2/X',
-      defaultValue: false,
-    );
-    farCamHeading = SubscribedTopic(
-      ntConnection: ntConnection,
-      topic: '/SmartDashboard/LL/limelight-one/mt2/Y',
-      defaultValue: false,
+      topic: '/limelight-one/targetpose_robotspace',//#TODO: figure out why it's not getting the values
+      //topic: '/limelight-one/rawfiducials'
+      defaultValue: const [],
     );
 
     topics = [
       // closeCamX,
       // closeCamY,
-      farCamX,
-      farCamY,
+      // farCamX,
+      // farCamY,
       // leftCamX,
       // leftCamY,
       // rightCamX,
@@ -160,8 +179,9 @@ class VisionTopics {
       // leftCamHeading,
       // closeCamLocation,
       // closeCamHeading,
-      farCamLocation,
-      farCamHeading,
+      // farCamLocation,
+      // farCamHeading,
+      dtarget_pose,
     ];
   }
 
@@ -181,9 +201,35 @@ class VisionTopics {
       topics.map((topic) => topic.subscription).toList();
 
   // Offset get closeCamPose => Offset(closeCamX.value, closeCamY.value);
-  Offset get farCamPose => Offset(farCamX.value, farCamY.value);
+  // Offset get farCamPose => Offset(farCamX.value, farCamY.value);
   // Offset get leftCamPose => Offset(leftCamX.value, leftCamY.value);
   // Offset get rightCamPose => Offset(rightCamX.value, rightCamY.value);
+  
+
+
+  // (double, double) get robotPosition => (_target_pose.value[0],_target_pose.value[1]);//{_target_pose.value[0],_target_pose.value[1]};
+
+  //     // .whereType<double>()
+  //     // .toList();       
+  // if (robotPosition.isEmpty || (robotPosition[0] == 0 && robotPosition[1] == 0 && robotPosition[2] == 0)) {                
+  //   robotPosition() = (robotPositionRaw.first as List<Object?>?)
+  //     ?.whereType<double>()
+  //     .toList() ?? [];
+  //   // logger.debug('Something went wrong with the PoseStruct, falling back from: $robotPositionRaw to $robotPosition');
+  // }
+
+  // if (robotPosition.length >= 3) {
+  //   robotX = robotPosition()[0];
+  //   robotY = robotPosition()[1];
+  //   robotTheta = radians(robotPosition()[2]);
+  // }
+  
+    //send debug:
+  //  Offset get targetPose => Offset(_target_pose.value[0], _target_pose.value[1]);
+  Offset get targetPose => Offset(dtarget_pose.value[0],dtarget_pose.value[1]);
+  //List<double> get targetVal => [dtarget_pose.value[0],dtarget_pose.value[1],dtarget_pose.value[5]]; //x, Y, yaw
+   //List<double> get datargetPose => _target_pose.value;// Offset(_target_pose.value[0], _target_pose.value[1]);
+   //List<Object?> get targetPose => [_target_pose];
 }
 
 // Manages all game-piece-related NT topics.
@@ -191,7 +237,7 @@ class GamePieceTopics {
   final NTConnection ntConnection;
   final double period;
 
-  late final SubscribedTopic<List<double>> gamePieces;
+  late final SubscribedTopic<List<dynamic>> gamePieces;
 
   GamePieceTopics({required this.ntConnection, this.period = 0.1}) {
     gamePieces = SubscribedTopic(
@@ -207,7 +253,7 @@ class GamePieceTopics {
   List<Listenable> get listenables => [gamePieces.subscription];
 
   List<Offset> get value {
-    List<double> raw = gamePieces.value;
+    List<dynamic> raw = gamePieces.value;
 
     List<Offset> offsets = [];
     // The list is [x1, y1, x2, y2, ...], so we iterate by 2.
@@ -241,7 +287,7 @@ class AllianceTopic {
 
   List<Listenable> get listenables => [isRedAlliance.subscription];
 
-  bool get value => isRedAlliance.value;
+  bool get value => !isRedAlliance.value;
 }
 
 // Manages topics for commanding the robot pose.

@@ -61,6 +61,7 @@ class FieldWidget extends NTWidget {
   Widget build(BuildContext context) {
     FieldWidgetModel model = cast(context.watch<NTWidgetModel>());
 
+
     return LayoutBuilder(
       builder: (context, constraints) => ListenableBuilder(
         listenable: Listenable.merge(model.subscriptions),
@@ -95,6 +96,8 @@ class FieldWidget extends NTWidget {
                 ?.whereType<double>()
                 .toList() ?? [];
               // logger.debug('Something went wrong with the PoseStruct, falling back from: $robotPositionRaw to $robotPosition');
+              //logger.debug('Value: ${model.visionTopics.targetPose} + ${Offset(robotPosition[0],robotPosition[1])} = ${Offset(model.visionTopics.targetPose.dx+robotPosition[0],-model.visionTopics.targetPose.dy+robotPosition[1])}');
+
             }
 
             if (robotPosition.length >= 3) {
@@ -103,6 +106,37 @@ class FieldWidget extends NTWidget {
               robotTheta = radians(robotPosition[2]);
             }
           }
+
+          // List<Object?> robotVisionPositionRaw = [
+          //   // model.robotXSubscription.value,
+          //   // model.robotYSubscription.value,
+          //   // model.robotHeadingSubscription.value,
+          //   model.visionTopics._target_pose
+          // ];
+
+          // double robotVisionX = 0;
+          // double robotVisionY = 0;
+          // double robotVisionTheta = 0;
+
+          // {
+          //   List<double> robotVisionPosition = robotVisionPositionRaw
+          //       .whereType<double>()
+          //       .toList();       
+          //   if (robotVisionPosition.isEmpty || (robotVisionPosition[0] == 0 && robotVisionPosition[1] == 0 && robotVisionPosition[2] == 0)) {                
+          //     robotVisionPosition = (robotVisionPositionRaw.first as List<Object?>?)
+          //       ?.whereType<double>()
+          //       .toList() ?? [];
+          //      logger.debug('Something went wrong with the PoseStruct, falling back from: $robotVisionPositionRaw to $robotVisionPosition');
+          //     //logger.debug('Value: ${model.visionTopics.targetPose.}');//não achei outro canto pra debug
+
+          //   }
+
+          //   if (robotVisionPosition.length >= 3) {
+          //     robotVisionX = robotVisionPosition[0];
+          //     robotVisionY = robotVisionPosition[1];
+          //     robotVisionTheta = radians(robotVisionPosition[5]);//roll, pitch, yaw
+          //   }
+          // }
 
           //debug output the values from robotxy and theta
           // debugPrint('robotPositionRaw: $robotPositionRaw');
@@ -434,9 +468,9 @@ class FieldWidget extends NTWidget {
                               alignment: Alignment.center,
                               children: [
                                 Transform(
-                                  transform: !model.allianceTopic.value
-                                      ? Matrix4.diagonal3Values(-1, -1, 1)
-                                      : Matrix4.identity(),
+                                  transform: Matrix4.identity(),//!model.allianceTopic.value
+                                      // ? Matrix4.diagonal3Values(-1, -1, 1)
+                                      // : Matrix4.identity(),
                                   alignment: Alignment.center,
                                   child: SizedBox(
                                     width: imageDisplaySize.width,
@@ -497,53 +531,70 @@ class FieldWidget extends NTWidget {
                                       center: imageDisplaySize.toOffset / 2,
                                       field: model.field,
                                       poses: [
+                                        //Offset(robotVisionX,robotVisionY),
+                                        //Offset(model.visionTopics.targetPose.dx+robotX,-model.visionTopics.targetPose.dy+robotY),
+                                        // compute target offset in world frame from robot pose + target offsets (horizontal, vertical)
+                                        // final tv = model.visionTopics.targetVal;
+                                        // double tx = robotX;
+                                        // double ty = robotY;
+                                        // if (tv.length >= 2) {
+                                        //   final double h = tv[0]; // horizontal offset (meters)
+                                        //   final double v = tv[1]; // vertical offset / distance (meters)
+                                        //   final double dx = cos(robotTheta) * h - sin(robotTheta) * v;
+                                        //   final double dy = sin(robotTheta) * h + cos(robotTheta) * v;
+                                        //   tx += dx;
+                                        //   ty += dy;
+                                        // }
+                                        // Offset(tx, ty),
+                                        Offset(robotX+(cos(robotTheta+pi/2) * model.visionTopics.targetPose.dx - sin(robotTheta+pi/2) * model.visionTopics.targetPose.dy),
+                                              robotY+(sin(robotTheta+pi/2) * model.visionTopics.targetPose.dx + cos(robotTheta+pi/2) * model.visionTopics.targetPose.dy)),
                                         // model.visionTopics.closeCamPose,
-                                        model.visionTopics.farCamPose,
+                                        // model.visionTopics.farCamPose,
                                         // model.visionTopics.leftCamPose,
                                         // model.visionTopics.rightCamPose,
                                       ],
-                                      statuses: [
-                                        // [
-                                        //   model
-                                        //       .visionTopics
-                                        //       .closeCamLocation
-                                        //       .value,
-                                        //   model
-                                        //       .visionTopics
-                                        //       .closeCamHeading
-                                        //       .value,
-                                        // ],
-                                        // [
-                                        //   model
-                                        //       .visionTopics
-                                        //       .farCamLocation
-                                        //       .value,
-                                        //   model
-                                        //       .visionTopics
-                                        //       .farCamHeading
-                                        //       .value,
-                                        // ],
-                                        // [
-                                        //   model
-                                        //       .visionTopics
-                                        //       .leftCamLocation
-                                        //       .value,
-                                        //   model
-                                        //       .visionTopics
-                                        //       .leftCamHeading
-                                        //       .value,
-                                        // ],
-                                        // [
-                                        //   model
-                                        //       .visionTopics
-                                        //       .rightCamLocation
-                                        //       .value,
-                                        //   model
-                                        //       .visionTopics
-                                        //       .rightCamHeading
-                                        //       .value,
-                                        // ],
-                                      ],
+                                      // statuses: [
+                                      //   // [
+                                      //   //   model
+                                      //   //       .visionTopics
+                                      //   //       .closeCamLocation
+                                      //   //       .value,
+                                      //   //   model
+                                      //   //       .visionTopics
+                                      //   //       .closeCamHeading
+                                      //   //       .value,
+                                      //   // ],
+                                      //   // [
+                                      //   //   model
+                                      //   //       .visionTopics
+                                      //   //       .farCamLocation
+                                      //   //       .value,
+                                      //   //   model
+                                      //   //       .visionTopics
+                                      //   //       .farCamHeading
+                                      //   //       .value,
+                                      //   // ],
+                                      //   // [
+                                      //   //   model
+                                      //   //       .visionTopics
+                                      //   //       .leftCamLocation
+                                      //   //       .value,
+                                      //   //   model
+                                      //   //       .visionTopics
+                                      //   //       .leftCamHeading
+                                      //   //       .value,
+                                      //   // ],
+                                      //   // [
+                                      //   //   model
+                                      //   //       .visionTopics
+                                      //   //       .rightCamLocation
+                                      //   //       .value,
+                                      //   //   model
+                                      //   //       .visionTopics
+                                      //   //       .rightCamHeading
+                                      //   //       .value,
+                                      //   // ],
+                                      // ],
                                       color: model.visionTargetColor,
                                       markerSize: model.visionMarkerSize,
                                       scale: scale,

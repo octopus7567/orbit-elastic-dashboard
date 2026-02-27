@@ -637,6 +637,19 @@ class _DashboardPageState extends State<DashboardPage>
         }
       },
     );
+    
+    // Test NT (Ctrl + G)
+    // hotKeyManager.register(
+    //   HotKey(
+    //     LogicalKeyboardKey.keyG,
+    //     modifiers: [KeyModifier.control],
+    //   ),
+    //   callback: () {
+    //     logger.debug('Attempting to change the limelight value');
+    //     _addSample('/limelight-one/targetpose_robotspace', true);//doesn't seems to be able to acess it
+    //   },
+    // );
+
     // // Reset Gyro (Ctrl + G)
     // hotKeyManager.register(
     //   HotKey(
@@ -645,6 +658,7 @@ class _DashboardPageState extends State<DashboardPage>
     //   ),
     //   callback: () => _addSample('/Match/Commander/ResetGyro', true),
     // );
+
     // // Reset Convey Faults (Ctrl + W)
     // hotKeyManager.register(
     //   HotKey(

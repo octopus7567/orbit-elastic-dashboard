@@ -396,7 +396,7 @@ class _GraphWidgetGraphState extends State<_GraphWidgetGraph>
             addedDataIndexes: addedIndexes,
             removedDataIndexes: removedIndexes.isEmpty ? null : removedIndexes,
           );
-        } catch (error, stackTrace) {
+        } catch (error) {
           // The update data source can get very finicky, so if there's an error,
           // just refresh everything
           setState(() {

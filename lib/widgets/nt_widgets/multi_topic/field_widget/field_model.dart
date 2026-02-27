@@ -59,6 +59,7 @@ class FieldWidgetModel extends MultiTopicNTWidgetModel {
   List<NT4Subscription> get subscriptions => [
     robotSubscription,
     ...otherObjectSubscriptions,
+    // ...visionTopics.listenables.,
     ...visionTopics.listenables.whereType<NT4Subscription>(),
     ...gamePieceTopics.listenables.whereType<NT4Subscription>(),
     ...allianceTopic.listenables.whereType<NT4Subscription>(),
